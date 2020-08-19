@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using CommandLine;
-using BeamBackend;
+using BeamGameCode;
 using UniLog;
 
 namespace BeamCli
