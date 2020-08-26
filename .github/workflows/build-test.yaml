@@ -43,9 +43,12 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore
+      working-directory: main
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      working-directory: main
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      working-directory: main
