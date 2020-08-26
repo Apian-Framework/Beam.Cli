@@ -35,6 +35,12 @@ jobs:
         repository: Apian-Framework/Apian.Net
         path: Apian.Net
 
+    - name: Checkout Apian dependencies (P2pNet)
+      uses: actions/checkout@v2
+      with:
+        repository: Apian-Framework/P2pNet
+        path: P2pNet
+
     - name: Checkout Apian dependencies (NotUnityEngine)
       uses: actions/checkout@v2
       with:
