@@ -41,13 +41,19 @@ jobs:
         repository: Apian-Framework/P2pNet
         path: P2pNet
 
+    - name: Checkout Apian dependencies (UniLog)
+      uses: actions/checkout@v2
+      with:
+        repository: Apian-Framework/P2pNet
+        path: UniLog
+
     - name: Checkout Apian dependencies (NotUnityEngine)
       uses: actions/checkout@v2
       with:
         repository: Apian-Framework/NotUnityEngine
         path: NotUnityEngine
 
-    - name: Install dependencies
+    - name: Restore dependencies
       run: dotnet restore
       working-directory: main
 
