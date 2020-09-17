@@ -54,17 +54,17 @@ namespace BeamCli
         {
             public SplashModeFuncs() : base()
             {
-    //           _cmdDispatch[ModeSplash.kCmdTargetCamera] = new Action<object>(o => TargetCamera(o));
+               _cmdDispatch[ModeSplash.kCmdTargetCamera] = new Action<object>(o => TargetCamera(o as TargetIdParams));
             }
 
-            // protected void TargetCamera(ModeSplash.TargetIdParams parm)
-            // {
-
-            // }
+            protected void TargetCamera(TargetIdParams parm)
+            {
+                TargetIdParams p = (TargetIdParams)parm;
+            }
 
             public override void OnStart(object parms=null)
             {
-                TargetIdParams p = (TargetIdParams)parms;
+
             }
 
             public override void OnEnd(object parms=null) {}
@@ -86,7 +86,7 @@ namespace BeamCli
 
             public override void OnStart(object parms=null)
             {
-                TargetIdParams p = (TargetIdParams)parms;
+
             }
             public override void OnEnd(object parms=null)
             {
