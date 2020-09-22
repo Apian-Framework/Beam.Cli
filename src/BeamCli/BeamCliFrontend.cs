@@ -72,6 +72,15 @@ namespace BeamCli
         //
         // IBeamFrontend API
         //
+
+        public void DisplayMessage(MessageSeverity lvl, string msgText)
+        {
+            string lvlStr = (lvl == MessageSeverity.Info) ? "Info"
+                : (lvl == MessageSeverity.Warning) ? "Warning"
+                    : "Error";
+            Console.WriteLine($"{lvl}: {msgText}");
+        }
+
         public BeamUserSettings GetUserSettings() => userSettings;
 
         // Backend game modes
