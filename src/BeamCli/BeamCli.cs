@@ -14,7 +14,7 @@ namespace BeamCli
             [Option(
 	            Default = null,
 	            HelpText = "Join this game. Else create a game")]
-            public string GameId {get; set;}
+            public string GameSpec {get; set;}
 
             [Option(
 	            Default = -1,
@@ -66,8 +66,8 @@ namespace BeamCli
                         if (o.DefLogLvl != null)
                             settings.defaultLogLevel = o.DefLogLvl;
 
-                        if (o.GameId != null)
-                            settings.tempSettings["gameId"] = o.GameId;
+                        if (o.GameSpec != null)
+                            settings.tempSettings["gameSpec"] = o.GameSpec;
 
                        if (o.StartMode != -1)
                             settings.startMode = o.StartMode;

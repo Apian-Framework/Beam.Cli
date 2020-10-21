@@ -40,6 +40,7 @@ namespace BeamCli
             OnNewCoreState(null, back.CoreData); // initialize
 
             back.NewCoreStateEvt += OnNewCoreState;
+            back.PlayerJoinedEvt += OnPlayerJoinedEvt;
             back.PlayersClearedEvt += OnPlayersClearedEvt;
             back.NewBikeEvt += OnNewBikeEvt;
             back.BikeRemovedEvt += OnBikeRemovedEvt;
@@ -107,6 +108,15 @@ namespace BeamCli
         public void OnPeerLeftGameEvt(object sender, PeerLeftGameArgs args)
         {
             logger.Info($"OnPeerLeftEvt(): {args.p2pId}");
+        }
+
+        public void OnPlayerJoinedEvt(object sender, PlayerJoinedArgs args)
+        {
+            // Player joined means a group has been joined AND is synced (ready to go)
+            if ( args.player.PeerId == backend.LocalPeerId )
+            {
+                 logger.Info($"*** Successfully joined Apian group: {args.groupChannel}");
+            }
         }
 
         public void OnPlayersClearedEvt(object sender, EventArgs e)
