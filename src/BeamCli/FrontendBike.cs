@@ -45,13 +45,13 @@ namespace BeamCli
 
         public UniLogger Logger;
 
-        public virtual void Setup(IBike beBike, IBeamAppCore core)
+        public virtual void Setup(IBike beBike, IBeamApplication appl, IBeamAppCore core)
         {
             Logger = UniLogger.GetLogger("Frontend");  // use the FE logger
             appCore = core;
             bb = beBike;
             CreateControl();
-            control.Setup(beBike, core);
+            control.Setup(appl, core, beBike);
         }
 
         public virtual void Loop(long curTime, int frameMs)

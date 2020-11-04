@@ -15,7 +15,8 @@ namespace BeamCli
     public class BeamCliFrontend : IBeamFrontend
     {
         public  Dictionary<string, FrontendBike> feBikes;
-        public IBeamAppCore backend;
+        public IBeamApplication beamAppl {get; private set;}
+        public IBeamAppCore appCore {get; private set;}
         protected BeamCliModeHelper _feModeHelper;
         protected BeamUserSettings userSettings;
         public UniLogger logger;
@@ -31,33 +32,38 @@ namespace BeamCli
             logger = UniLogger.GetLogger("Frontend");
         }
 
-        public void SetAppCore(IBeamAppCore back)
+        public void SetBeamApplication(IBeamApplication appl)
         {
-            backend = back;
-            if (back == null)
+            beamAppl = appl;
+        }
+
+        public void SetAppCore(IBeamAppCore core)
+        {
+            appCore = core;
+            if (core == null)
                 return;
 
-            OnNewCoreState(null, back.CoreData); // initialize
+            OnNewCoreState(null, core.CoreData); // initialize
 
-            back.NewCoreStateEvt += OnNewCoreState;
-            back.PlayerJoinedEvt += OnPlayerJoinedEvt;
-            back.PlayersClearedEvt += OnPlayersClearedEvt;
-            back.NewBikeEvt += OnNewBikeEvt;
-            back.BikeRemovedEvt += OnBikeRemovedEvt;
-            back.BikesClearedEvt +=OnBikesClearedEvt;
-            back.PlaceClaimedEvt += OnPlaceClaimedEvt;
-            back.PlaceHitEvt += OnPlaceHitEvt;
+            core.NewCoreStateEvt += OnNewCoreState;
+            core.PlayerJoinedEvt += OnPlayerJoinedEvt;
+            core.PlayersClearedEvt += OnPlayersClearedEvt;
+            core.NewBikeEvt += OnNewBikeEvt;
+            core.BikeRemovedEvt += OnBikeRemovedEvt;
+            core.BikesClearedEvt +=OnBikesClearedEvt;
+            core.PlaceClaimedEvt += OnPlaceClaimedEvt;
+            core.PlaceHitEvt += OnPlaceHitEvt;
 
-            back.ReadyToPlayEvt += OnReadyToPlay;
+            core.ReadyToPlayEvt += OnReadyToPlay;
 
         }
 
         public virtual void Loop(float frameSecs)
         {
-            if (backend == null)
+            if (appCore == null)
                 return;
 
-            long curGameTime = backend.CurrentRunningGameTime;
+            long curGameTime = appCore.CurrentRunningGameTime;
             int frameMs = (int)(curGameTime - prevGameTime);
             prevGameTime = curGameTime;
 
@@ -113,7 +119,7 @@ namespace BeamCli
         public void OnPlayerJoinedEvt(object sender, PlayerJoinedArgs args)
         {
             // Player joined means a group has been joined AND is synced (ready to go)
-            if ( args.player.PeerId == backend.LocalPeerId )
+            if ( args.player.PeerId == appCore.LocalPeerId )
             {
                  logger.Info($"*** Successfully joined Apian group: {args.groupChannel}");
             }
@@ -128,9 +134,9 @@ namespace BeamCli
         // Bikes
         public void OnNewBikeEvt(object sender, IBike ib)
         {
-            logger.Info($"OnNewBikeEvt(). Id: {ib.bikeId}, Local: {ib.peerId == backend.LocalPeerId}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
-            FrontendBike b = FeBikeFactory.Create(ib, ib.peerId == backend.LocalPeerId);
-            b.Setup(ib, backend);
+            logger.Info($"OnNewBikeEvt(). Id: {ib.bikeId}, Local: {ib.peerId == appCore.LocalPeerId}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
+            FrontendBike b = FeBikeFactory.Create(ib, ib.peerId == appCore.LocalPeerId);
+            b.Setup(ib, beamAppl, appCore);
             feBikes[ib.bikeId] = b;
         }
         public void OnBikeRemovedEvt(object sender, BikeRemovedData rData)
