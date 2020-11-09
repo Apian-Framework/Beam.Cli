@@ -30,7 +30,6 @@ namespace BeamCli
             _modeFuncs = new Dictionary<int, ModeFuncs>()
             {
                 { BeamModeFactory.kSplash, new SplashModeFuncs()},
-                { BeamModeFactory.kConnect, new ConnectModeFuncs()},
                 { BeamModeFactory.kPlay, new PlayModeFuncs()},
                 { BeamModeFactory.kPractice, new PracticeModeFuncs()}
             };
@@ -67,16 +66,6 @@ namespace BeamCli
 
             }
 
-            public override void OnEnd(object parms=null) {}
-        }
-
-        class ConnectModeFuncs : ModeFuncs
-        {
-            public ConnectModeFuncs() : base() {}
-            public override void OnStart(object parms=null)
-            {
-
-            }
             public override void OnEnd(object parms=null) {}
         }
 
