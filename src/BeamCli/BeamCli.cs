@@ -93,7 +93,7 @@ namespace BeamCli
     }
 
 
-    class CliDriver
+    public class CliDriver
     {
         public long targetFrameMs {get; private set;} = 16;
 
