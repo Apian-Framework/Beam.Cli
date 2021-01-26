@@ -17,6 +17,7 @@ namespace BeamCliTests
         {
             CliDriver drv = new CliDriver();
             Assert.That(drv, Is.Not.Null);
+            Assert.That(drv.targetFrameMs, Is.EqualTo(16)); // default
         }
     }
 

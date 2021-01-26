@@ -32,6 +32,30 @@ jobs:
       with:
         path: main
 
+    - name: Checkout framework dependency - UniLog
+      uses: actions/checkout@v2
+      with:
+        repository: Apian-Framework/UniLog
+        path: UniLog
+
+    - name: Checkout framework dependency - P2pNet
+      uses: actions/checkout@v2
+      with:
+        repository: Apian-Framework/P2pNet
+        path: P2pNet
+
+    - name: Checkout framework dependency - Apian.Net
+      uses: actions/checkout@v2
+      with:
+        repository: Apian-Framework/Apian.Net
+        path: Apian.Net
+
+    - name: Checkout framework dependency - NotUnityEngine
+      uses: actions/checkout@v2
+      with:
+        repository: Apian-Framework/NotUnityEngine
+        path: NotUnityEngine
+
     - name: Checkout Apian dependencies (BeamGameCode)
       uses: actions/checkout@v2
       with:
