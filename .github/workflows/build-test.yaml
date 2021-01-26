@@ -9,7 +9,7 @@ on:
     branches: [ master ]
     paths:
     - 'src/BeamCli/**'
-    - 'tests/BeamCli/**'
+    - 'tests/BeamCli.Tests/**'
 
 # Would really like to do this:
 #    paths:
