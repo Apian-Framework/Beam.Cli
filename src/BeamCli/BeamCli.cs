@@ -7,7 +7,7 @@ using UniLog;
 
 namespace BeamCli
 {
-    class Program
+    public class Program
     {
         public class CliOptions
         {
@@ -51,6 +51,8 @@ namespace BeamCli
         {
             BeamUserSettings settings = UserSettingsMgr.Load();
 
+            //UniLogger.GetLogger("args").Warn(String.Join("\n", args));
+
             Parser.Default.ParseArguments<CliOptions>(args)
                     .WithParsed<CliOptions>(o =>
                     {
@@ -82,7 +84,7 @@ namespace BeamCli
             return settings;
         }
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             BeamUserSettings settings = GetSettings(args);
             UniLogger.DefaultLevel = UniLogger.LevelFromName(settings.defaultLogLevel);
