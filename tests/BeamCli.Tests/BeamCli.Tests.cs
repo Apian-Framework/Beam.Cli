@@ -69,14 +69,11 @@ namespace BeamCliTests
             }
         }
 
-
-
         [TestCase("--startmode,2", "startMode", 2)]
         [TestCase("--bikectrl,ai", "localPlayerCtrlType", "ai")]
         [TestCase("--defloglvl,info", "defaultLogLevel", "info")]
         [TestCase("--throwonerror,true", "DefaultThrowOnError", true)]
         [TestCase("--gamespec,foo/bar+", "GameSpec", "foo/bar+")]
-
         public void CliProgram_GetSettings(string argsString, string settingName, object val)
         {
             var args = argsString.Split(',');
