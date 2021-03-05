@@ -105,13 +105,13 @@ namespace BeamCli
 
         // Players
 
-        public void OnPeerJoinedGameEvt(object sender, PeerJoinedGameArgs args)
+        public void OnPeerJoinedGameEvt(object sender, PeerJoinedArgs args)
         {
         ///     BeamGroupMember p = args.peer;
         ///     logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {p.PeerId}");
         }
 
-        public void OnPeerLeftGameEvt(object sender, PeerLeftGameArgs args)
+        public void OnPeerLeftGameEvt(object sender, PeerLeftArgs args)
         {
             logger.Info($"OnPeerLeftEvt(): {args.p2pId}");
         }
