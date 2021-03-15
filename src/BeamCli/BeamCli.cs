@@ -14,11 +14,16 @@ namespace BeamCli
             [Option(
 	            Default = null,
 	            HelpText = "Join this game. Else create a game")]
-            public string GameSpec {get; set;}
+            public string GameName {get; set;}
+
+            [Option(
+	            Default = null,
+	            HelpText = "Apian Network name" )]
+            public string NetName {get; set;}
 
             [Option(
 	            Default = -1,
-	            HelpText = "(persistent) Start with this GameMode")]
+	            HelpText = "Start with this GameMode" )]
             public int StartMode {get; set;}
 
             [Option(
@@ -28,7 +33,7 @@ namespace BeamCli
 
             [Option(
 	            Default = null,
-	            HelpText = "User settings basename (Default: beamsettings)")]
+	            HelpText = "User settings file basename (Default: beamsettings)")]
             public string Settings {get; set;}
 
             [Option(
@@ -68,8 +73,11 @@ namespace BeamCli
                         if (o.DefLogLvl != null)
                             settings.defaultLogLevel = o.DefLogLvl;
 
-                        if (o.GameSpec != null)
-                            settings.tempSettings["gameSpec"] = o.GameSpec;
+                        if (o.NetName != null)
+                            settings.apianNetworkName = o.NetName;
+
+                        if (o.GameName != null)
+                            settings.tempSettings["gameName"] = o.GameName;
 
                        if (o.StartMode != -1)
                             settings.startMode = o.StartMode;

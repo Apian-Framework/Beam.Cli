@@ -102,6 +102,33 @@ namespace BeamCli
             newCoreState.SetupPlaceMarkerEvt += OnSetupPlaceMarkerEvt;
         }
 
+        // Game code calls with a list of the currently existing games
+        // Since this is the CLI app, we fetch the "gameName" cli parameter
+        // and use that (in a gui App we'd display the list + leave a place for the player to
+        // enter a new name)
+        // There is no return value. In the general case this is an async frontend gui thing.
+        // In any case, it returns when the frontend calls: beamAppl.OnGameSelected( gameName, )
+        public void SelectGame(IList<string> existingGameNames)
+        {
+            // gameName cli param can end in:
+            //  '+' = means join the game if it exists, create if not
+            //  '*' = means create if it oes not exist. Error if it's already there
+            //  '' = "nothing" means join if it's there, or error
+            string gameName = null;
+            GameSelectedArgs.ReturnCode result;
+
+            string argStr;
+            if (userSettings.tempSettings.TryGetValue("gameName", out argStr))
+            {
+                gameName = argStr.TrimEnd( new [] {'+','*'} );
+                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && !existingGameNames.Contains(gameName)) ? GameSelectedArgs.ReturnCode.kCreate
+                    : GameSelectedArgs.ReturnCode.kJoin;
+            }
+            else
+                throw new Exception($"gameName setting missing.");
+
+            beamAppl.OnGameSelected( gameName, result );
+        }
 
         // Players
 
