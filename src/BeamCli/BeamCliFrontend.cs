@@ -3,8 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+using Apian;
 using BeamGameCode;
 using BikeControl;
 using UniLog;
@@ -103,12 +102,15 @@ namespace BeamCli
         }
 
         // Game code calls with a list of the currently existing games
-        // Since this is the CLI app, we fetch the "gameName" cli parameter
-        // and use that (in a gui App we'd display the list + leave a place for the player to
-        // enter a new name)
-        // There is no return value. In the general case this is an async frontend gui thing.
-        // In any case, it returns when the frontend calls: beamAppl.OnGameSelected( gameName, )
-        public void SelectGame(IList<string> existingGameNames)
+        // Since this is the CLI app, we mostly ignore that and fetch the "gameName" cli parameter
+        // and use that (in a gui App we'd display the list + have a way for the player to
+        // enter params for a new game)
+
+        // There is no return value. In the general case this is an async frontend gui thing
+        // and ends with the frontend callsing: beamAppl.OnGameSelected( gameInfo, )
+
+        // In THIS case, we call onGameSlected() here
+        public void SelectGame(IDictionary<string, BeamGameInfo> existingGames)
         {
             // gameName cli param can end in:
             //  '+' = means join the game if it exists, create if not
@@ -116,18 +118,24 @@ namespace BeamCli
             //  '' = "nothing" means join if it's there, or error
             string gameName = null;
             GameSelectedArgs.ReturnCode result;
+            BeamGameInfo gameInfo;
 
             string argStr;
             if (userSettings.tempSettings.TryGetValue("gameName", out argStr))
             {
                 gameName = argStr.TrimEnd( new [] {'+','*'} );
-                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && !existingGameNames.Contains(gameName)) ? GameSelectedArgs.ReturnCode.kCreate
+                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedArgs.ReturnCode.kCreate
                     : GameSelectedArgs.ReturnCode.kJoin;
+
+                gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName]
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, CreatorServerGroupManager.groupType);
             }
             else
                 throw new Exception($"gameName setting missing.");
 
-            beamAppl.OnGameSelected( gameName, result );
+            // Info about BeamGameInfo creation lives in BeamGameNet
+
+            beamAppl.OnGameSelected( gameInfo, result );
         }
 
         // Players
