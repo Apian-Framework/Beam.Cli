@@ -73,7 +73,7 @@ namespace BeamCliTests
         [TestCase("--bikectrl,ai", "localPlayerCtrlType", "ai")]
         [TestCase("--defloglvl,info", "defaultLogLevel", "info")]
         [TestCase("--throwonerror,true", "DefaultThrowOnError", true)]
-        [TestCase("--gamespec,foo/bar+", "GameSpec", "foo/bar+")]
+        [TestCase("--gamename,bar+", "gameName", "bar+")]
         public void CliProgram_GetSettings(string argsString, string settingName, object val)
         {
             var args = argsString.Split(',');
@@ -82,8 +82,8 @@ namespace BeamCliTests
 
             switch(settingName)
             {
-            case "GameSpec":
-                Assert.That(sets.tempSettings["gameSpec"], Is.EqualTo(val));
+            case "gameName":
+                Assert.That(sets.tempSettings["gameName"], Is.EqualTo(val));
                 break;
             case "DefaultThrowOnError":
                 Assert.That(UniLogger.DefaultThrowOnError, Is.EqualTo(val));
