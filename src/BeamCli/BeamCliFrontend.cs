@@ -128,7 +128,7 @@ namespace BeamCli
                     : GameSelectedArgs.ReturnCode.kJoin;
 
                 gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName]
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, CreatorServerGroupManager.groupType);
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, LeaderSezGroupManager.groupType);
             }
             else
                 throw new Exception($"gameName setting missing.");
