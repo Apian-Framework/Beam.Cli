@@ -127,8 +127,10 @@ namespace BeamCli
                 result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedArgs.ReturnCode.kCreate
                     : GameSelectedArgs.ReturnCode.kJoin;
 
+                // TODO: does the frontend have any busniess selecting an agreement type?
+                // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName]
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, LeaderSezGroupManager.groupType);
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, LeaderSezGroupManager.kGroupType);
             }
             else
                 throw new Exception($"gameName setting missing.");
