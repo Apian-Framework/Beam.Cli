@@ -7,6 +7,7 @@ using Apian;
 using BeamGameCode;
 using BikeControl;
 using UniLog;
+using static UniLog.UniLogger; // for SID()
 
 namespace BeamCli
 {
@@ -150,7 +151,7 @@ namespace BeamCli
 
         public void OnPeerLeftGameEvt(object sender, PeerLeftArgs args)
         {
-            logger.Info($"OnPeerLeftEvt(): {args.p2pId}");
+            logger.Info($"OnPeerLeftEvt(): {SID(args.p2pId)}");
         }
 
         public void OnPlayerJoinedEvt(object sender, PlayerJoinedArgs args)
@@ -171,14 +172,14 @@ namespace BeamCli
         // Bikes
         public void OnNewBikeEvt(object sender, IBike ib)
         {
-            logger.Info($"OnNewBikeEvt(). Id: {ib.bikeId}, Local: {ib.peerId == appCore.LocalPeerId}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
+            logger.Info($"OnNewBikeEvt(). Id: {SID(ib.bikeId)}, Local: {ib.peerId == appCore.LocalPeerId}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
             FrontendBike b = FeBikeFactory.Create(ib, ib.peerId == appCore.LocalPeerId);
             b.Setup(ib, beamAppl, appCore);
             feBikes[ib.bikeId] = b;
         }
         public void OnBikeRemovedEvt(object sender, BikeRemovedData rData)
         {
-            logger.Info(string.Format("OnBikeRemovedEvt({0}). Id: {1}", rData.doExplode ? "Boom!" : "", rData.bikeId));
+            logger.Info($"OnBikeRemovedEvt({(rData.doExplode ? "Boom!" : "(poof)")}). Id: {SID(rData.bikeId)}");
             feBikes.Remove(rData.bikeId);
         }
         public void OnBikesClearedEvt(object sender, EventArgs e)
@@ -201,12 +202,12 @@ namespace BeamCli
             //                                // (would rather make it not happen - not sure if that's possible)
             // string placeOwner = createdBy.peerId;
 
-            logger.Info($"OnPlaceHitEvt. Place: {args.p?.GetPos().ToString()}  Bike: {args.ib?.bikeId}");
+            logger.Info($"OnPlaceHitEvt. Place: {args.p?.GetPos().ToString()}  Bike: {SID(args.ib?.bikeId)}");
         }
 
         public void OnPlaceClaimedEvt(object sender, BeamPlace p)
         {
-            logger.Verbose($"OnPlaceClaimedEvt. Pos: {p?.GetPos().ToString()} Bike: {p.bike.bikeId}");
+            logger.Verbose($"OnPlaceClaimedEvt. Pos: {p?.GetPos().ToString()} Bike: {SID(p.bike.bikeId)}");
         }
 
         // Ground
