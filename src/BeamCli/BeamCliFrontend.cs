@@ -47,6 +47,8 @@ namespace BeamCli
 
             core.NewCoreStateEvt += OnNewCoreState;
             core.PlayerJoinedEvt += OnPlayerJoinedEvt;
+            core.PlayerMissingEvt += OnPlayerMissingEvt;
+            core.PlayerReturnedEvt += OnPlayerReturnedEvt;
             core.PlayersClearedEvt += OnPlayersClearedEvt;
             core.NewBikeEvt += OnNewBikeEvt;
             core.BikeRemovedEvt += OnBikeRemovedEvt;
@@ -161,6 +163,15 @@ namespace BeamCli
             {
                  logger.Info($"*** Successfully joined Apian group: {args.groupChannel}");
             }
+        }
+
+        public void OnPlayerMissingEvt(object sender, PlayerLeftArgs args)
+        {
+            logger.Info($"*** Player {SID(args.p2pId)} is MISSING!!! from group {args.groupChannel}");
+        }
+        public void OnPlayerReturnedEvt(object sender, PlayerLeftArgs args)
+        {
+            logger.Info($"*** Player {SID(args.p2pId)} has RETURNED!!! to group {args.groupChannel}");
         }
 
         public void OnPlayersClearedEvt(object sender, EventArgs e)
