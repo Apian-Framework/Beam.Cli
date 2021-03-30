@@ -101,7 +101,6 @@ namespace BeamCli
         {
             newCoreState.PlaceFreedEvt += OnPlaceFreedEvt;
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
-            newCoreState.SetupPlaceMarkerEvt += OnSetupPlaceMarkerEvt;
         }
 
         // Game code calls with a list of the currently existing games
@@ -222,10 +221,6 @@ namespace BeamCli
         }
 
         // Ground
-        public void OnSetupPlaceMarkerEvt(object sender, BeamPlace p)
-        {
-            logger.Debug($"OnSetupPlaceMarkerEvt({p.xIdx}, {p.zIdx})");
-        }
 
         public void OnPlaceFreedEvt(object sender, BeamPlace p)
         {
