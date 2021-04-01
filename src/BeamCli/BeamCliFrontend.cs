@@ -43,7 +43,7 @@ namespace BeamCli
             if (core == null)
                 return;
 
-            OnNewCoreState(null, core.CoreData); // initialize
+            OnNewCoreState(null, core.CoreState); // initialize
 
             core.NewCoreStateEvt += OnNewCoreState;
             core.PlayerJoinedEvt += OnPlayerJoinedEvt;
