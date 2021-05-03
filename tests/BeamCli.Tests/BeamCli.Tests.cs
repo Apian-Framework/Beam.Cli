@@ -47,6 +47,7 @@ namespace BeamCliTests
             Assert.That(drvw.fe, Is.InstanceOf<BeamCliFrontend>());
             Assert.That(drvw.bgn, Is.InstanceOf<BeamGameNet>());
             Assert.That(drvw.appl, Is.InstanceOf<BeamApplication>());
+            Assert.That(drvw.fe.beamAppl, Is.EqualTo(drvw.appl));
         }
     }
 
