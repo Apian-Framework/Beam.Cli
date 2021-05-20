@@ -5,6 +5,7 @@ env:
   SUBPROJECT: BeamCli
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
     paths:
