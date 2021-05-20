@@ -56,8 +56,6 @@ namespace BeamCli
         {
             BeamUserSettings settings = UserSettingsMgr.Load();
 
-            //UniLogger.GetLogger("args").Warn(String.Join("\n", args));
-
             Parser.Default.ParseArguments<CliOptions>(args)
                     .WithParsed<CliOptions>(o =>
                     {
@@ -86,19 +84,27 @@ namespace BeamCli
                         if (o.BikeCtrl != null)
                             settings.localPlayerCtrlType = o.BikeCtrl;
 
+                    }).WithNotParsed(o =>
+                    {
+                        // --help, --version, or any error results in this getting called
+                        settings = null;
                     });
 
-            UserSettingsMgr.Save(settings);
+            if (settings != null)
+                UserSettingsMgr.Save(settings);
             return settings;
         }
 
         public static void Main(string[] args)
         {
             BeamUserSettings settings = GetSettings(args);
-            UniLogger.DefaultLevel = UniLogger.LevelFromName(settings.defaultLogLevel);
-            UniLogger.SetupLevels(settings.logLevels);
-            CliDriver drv = new CliDriver();
-            drv.Run(settings);
+            if (settings != null)
+            {
+                UniLogger.DefaultLevel = UniLogger.LevelFromName(settings.defaultLogLevel);
+                UniLogger.SetupLevels(settings.logLevels);
+                CliDriver drv = new CliDriver();
+                drv.Run(settings);
+            }
         }
     }
 

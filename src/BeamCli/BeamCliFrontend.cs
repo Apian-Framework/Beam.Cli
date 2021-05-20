@@ -88,6 +88,16 @@ namespace BeamCli
                 : (lvl == MessageSeverity.Warning) ? "Warning"
                     : "Error";
             Console.WriteLine($"{lvl}: {msgText}");
+
+            // TODO: should there be a separate HandleUnrecoverableError()
+            // API so things like console apps can exit gracfeully? Having it
+            // implmented in the FE is a good thing - but it feels a little hokey
+            // hanging it onto a DisplayMessage() method
+            if (lvl == MessageSeverity.Error)
+            {
+                beamAppl.ExitApplication();
+            }
+
         }
 
         public BeamUserSettings GetUserSettings() => userSettings;
