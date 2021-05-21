@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System;
+using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
@@ -118,11 +119,11 @@ namespace BeamCli
         // and use that (in a gui App we'd display the list + have a way for the player to
         // enter params for a new game)
 
-        // There is no return value. In the general case this is an async frontend gui thing
-        // and ends with the frontend callsing: beamAppl.OnGameSelected( gameInfo, )
+        // In the general GUI app case this is an async frontend gui thing
+        // and ends with the frontend setting the result for a passed-in TaskCompletionResult
 
-        // In THIS case, we call onGameSlected() here
-        public void SelectGame(IDictionary<string, BeamGameInfo> existingGames)
+        // In THIS case, we just return (but have to await something to be async)
+        public async Task<GameSelectedArgs> SelectGameAsync(IDictionary<string, BeamGameInfo> existingGames)
         {
             // gameName cli param can end in:
             //  '+' = means join the game if it exists, create if not
@@ -147,9 +148,8 @@ namespace BeamCli
             else
                 throw new Exception($"gameName setting missing.");
 
-            // Info about BeamGameInfo creation lives in BeamGameNet
-
-            beamAppl.OnGameSelected( gameInfo, result );
+            await Task.Delay(0); // Yuk, But usually this is an async UI operation
+            return new GameSelectedArgs(gameInfo, result);
         }
 
         // Players
