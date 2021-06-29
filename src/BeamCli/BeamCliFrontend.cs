@@ -136,6 +136,17 @@ namespace BeamCli
             string argStr;
             if (userSettings.tempSettings.TryGetValue("gameName", out argStr))
             {
+                string groupType;
+                if (userSettings.tempSettings.TryGetValue("groupType", out groupType))
+                {
+                    if (!BeamApianFactory.ApianGroupTypes.Contains(groupType))
+                        throw new Exception($"Unknown Group Type: {groupType}.");
+                    logger.Warn($"Requested group type: {groupType}");
+                } else {
+                    groupType = CreatorSezGroupManager.kGroupType;
+                }
+
+
                 gameName = argStr.TrimEnd( new [] {'+','*'} );
                 result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedArgs.ReturnCode.kCreate
                     : GameSelectedArgs.ReturnCode.kJoin;
@@ -143,7 +154,7 @@ namespace BeamCli
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName]
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, LeaderSezGroupManager.kGroupType);
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
             }
             else
                 throw new Exception($"gameName setting missing.");

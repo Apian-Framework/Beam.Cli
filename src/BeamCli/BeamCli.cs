@@ -22,6 +22,12 @@ namespace BeamCli
             public string NetName {get; set;}
 
             [Option(
+	            Default = null,
+	            HelpText = "Apian Group consensus mechanism (if creating)" )]
+            public string GroupType {get; set;}
+
+
+            [Option(
 	            Default = -1,
 	            HelpText = "Start with this GameMode" )]
             public int StartMode {get; set;}
@@ -76,6 +82,9 @@ namespace BeamCli
 
                         if (o.GameName != null)
                             settings.tempSettings["gameName"] = o.GameName;
+
+                        if (o.GroupType != null)
+                            settings.tempSettings["groupType"] = o.GroupType;
 
                        if (o.StartMode != -1)
                             settings.startMode = o.StartMode;
