@@ -1,15 +1,14 @@
-﻿using System.Diagnostics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
 using NUnit.Framework;
 using Newtonsoft.Json;
 using Moq;
 using Moq.Protected;
-using BeamCli;
 using UniLog;
 using BeamGameCode;
-using System.Reflection;
+using BeamCli;
 
 namespace BeamCliTests
 {
@@ -22,7 +21,7 @@ namespace BeamCliTests
         {
             public void CallInit(BeamUserSettings bus )
             {
-                base.Init(bus);
+                base._Init(bus);
             }
         }
 

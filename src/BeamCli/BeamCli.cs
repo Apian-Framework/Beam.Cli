@@ -128,11 +128,11 @@ namespace BeamCli
         public BeamGameNet bgn = null;
 
         public void Run(BeamUserSettings settings) {
-            Init(settings);
+            _Init(settings);
             LoopUntilDone();
         }
 
-        protected void Init(BeamUserSettings settings)
+        protected void _Init(BeamUserSettings settings)
         {
             fe = new BeamCliFrontend(settings);
             bgn = new BeamGameNet(); // TODO: config/settings?

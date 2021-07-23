@@ -23,6 +23,11 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+  </PropertyGroup>
+
+
+  <PropertyGroup>
     <!-- These are all for 'dotnet test' in order to match the ReportGenerator stuff below -->
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutput>./coverage/</CoverletOutput>
