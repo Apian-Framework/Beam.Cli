@@ -181,7 +181,7 @@ namespace BeamCli
             // then update the game
 
             float frameSecs = (float)frameMs / 1000f;
-            bgn.Loop();
+            bgn.Update();
             fe.Loop(frameSecs);
             return appl.Loop(frameSecs);
         }

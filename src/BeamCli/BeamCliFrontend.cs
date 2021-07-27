@@ -85,9 +85,11 @@ namespace BeamCli
 
         public void DisplayMessage(MessageSeverity lvl, string msgText)
         {
-            string lvlStr = (lvl == MessageSeverity.Info) ? "Info"
-                : (lvl == MessageSeverity.Warning) ? "Warning"
-                    : "Error";
+            // Seems like an enum.ToString() is the name of the enum? So this isn't needed,
+            // string lvlStr = (lvl == MessageSeverity.Info) ? "Info"
+            //     : (lvl == MessageSeverity.Warning) ? "Warning"
+            //         : "Error";
+
             Console.WriteLine($"{lvl}: {msgText}");
 
             // TODO: should there be a separate HandleUnrecoverableError()
