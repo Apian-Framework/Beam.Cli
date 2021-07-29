@@ -61,13 +61,6 @@ namespace BeamCliTests
            return fi.GetValue(s);
         }
 
-        public class WrappedProgram : Program
-        {
-            public static BeamUserSettings DoGetSettings(string[] args)
-            {
-                return GetSettings(args);
-            }
-        }
 
         [TestCase("--startmode,2", "startMode", 2)]
         [TestCase("--bikectrl,ai", "localPlayerCtrlType", "ai")]
@@ -77,7 +70,7 @@ namespace BeamCliTests
         public void CliProgram_GetSettings(string argsString, string settingName, object val)
         {
             var args = argsString.Split(',');
-            BeamUserSettings sets = WrappedProgram.DoGetSettings(args);
+            BeamUserSettings sets = Program.GetSettings(args);
             Assert.That(sets.version, Is.EqualTo(UserSettingsMgr.currentVersion));
 
             switch(settingName)

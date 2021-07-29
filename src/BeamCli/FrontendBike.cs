@@ -38,9 +38,9 @@ namespace BeamCli
             typeof(PlayerBike) // LocalPlayerCtrl - a human on this machine
         };
 
-        public IBike bb = null;
-        protected IBeamAppCore appCore = null;
-        protected IBikeControl control = null;
+        public IBike bb;
+        protected IBeamAppCore appCore;
+        protected IBikeControl control;
         protected abstract void CreateControl();
 
         public UniLogger Logger;

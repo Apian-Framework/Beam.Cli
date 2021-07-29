@@ -15,7 +15,7 @@ namespace BeamCli
             public void HandleCmd(int cmdId, object parms) => _cmdDispatch[cmdId](parms);
             protected Dictionary<int,dynamic> _cmdDispatch;
 
-            public ModeFuncs()
+            protected ModeFuncs()
             {
                 _cmdDispatch = new Dictionary<int, dynamic>();
             }

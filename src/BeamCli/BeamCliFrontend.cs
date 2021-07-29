@@ -22,7 +22,7 @@ namespace BeamCli
         protected BeamUserSettings userSettings;
         public UniLogger logger;
 
-        private long prevGameTime = 0;
+        private long prevGameTime;
 
         // Start is called before the first frame update
         public BeamCliFrontend(BeamUserSettings startupSettings)
@@ -44,7 +44,7 @@ namespace BeamCli
             if (core == null)
                 return;
 
-            OnNewCoreState(null, core.CoreState); // initialize
+            OnNewCoreState(null, new NewCoreStateEventArgs(core.CoreState)); // initialize
 
             core.NewCoreStateEvt += OnNewCoreState;
             core.PlayerJoinedEvt += OnPlayerJoinedEvt;
@@ -110,8 +110,9 @@ namespace BeamCli
         public void OnEndMode(int modeId, object param) => _feModeHelper.OnEndMode(modeId, param);
         public void DispatchModeCmd(int modeId, int cmdId, object param) => _feModeHelper.DispatchCmd(modeId, cmdId, param);
 
-        public void OnNewCoreState(object sender, BeamCoreState newCoreState)
+        public void OnNewCoreState(object sender, NewCoreStateEventArgs csArgs)
         {
+            BeamCoreState newCoreState = csArgs.coreState;
             newCoreState.PlaceFreedEvt += OnPlaceFreedEvt;
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
         }
@@ -125,14 +126,14 @@ namespace BeamCli
         // and ends with the frontend setting the result for a passed-in TaskCompletionResult
 
         // In THIS case, we just return (but have to await something to be async)
-        public async Task<GameSelectedArgs> SelectGameAsync(IDictionary<string, BeamGameInfo> existingGames)
+        public async Task<GameSelectedEventArgs> SelectGameAsync(IDictionary<string, BeamGameInfo> existingGames)
         {
             // gameName cli param can end in:
             //  '+' = means join the game if it exists, create if not
             //  '*' = means create if it oes not exist. Error if it's already there
             //  '' = "nothing" means join if it's there, or error
             string gameName = null;
-            GameSelectedArgs.ReturnCode result;
+            GameSelectedEventArgs.ReturnCode result;
             BeamGameInfo gameInfo;
 
             string argStr;
@@ -150,8 +151,8 @@ namespace BeamCli
 
 
                 gameName = argStr.TrimEnd( new [] {'+','*'} );
-                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedArgs.ReturnCode.kCreate
-                    : GameSelectedArgs.ReturnCode.kJoin;
+                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
+                    : GameSelectedEventArgs.ReturnCode.kJoin;
 
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
@@ -161,24 +162,24 @@ namespace BeamCli
             else
                 throw new Exception($"gameName setting missing.");
 
-            await Task.Delay(0); // Yuk, But usually this is an async UI operation
-            return new GameSelectedArgs(gameInfo, result);
+            await Task.Delay(0).ConfigureAwait(false); // Yuk, But usually this is an async UI operation
+            return new GameSelectedEventArgs(gameInfo, result);
         }
 
         // Players
 
-        public void OnPeerJoinedGameEvt(object sender, PeerJoinedArgs args)
+        public void OnPeerJoinedGameEvt(object sender, PeerJoinedEventArgs args)
         {
         ///     BeamGroupMember p = args.peer;
         ///     logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {p.PeerId}");
         }
 
-        public void OnPeerLeftGameEvt(object sender, PeerLeftArgs args)
+        public void OnPeerLeftGameEvt(object sender, PeerLeftEventArgs args)
         {
             logger.Info($"OnPeerLeftEvt(): {SID(args.p2pId)}");
         }
 
-        public void OnPlayerJoinedEvt(object sender, PlayerJoinedArgs args)
+        public void OnPlayerJoinedEvt(object sender, PlayerJoinedEventArgs args)
         {
             // Player joined means a group has been joined AND is synced (ready to go)
             if ( args.player.PeerId == appCore.LocalPeerId )
@@ -187,11 +188,11 @@ namespace BeamCli
             }
         }
 
-        public void OnPlayerMissingEvt(object sender, PlayerLeftArgs args)
+        public void OnPlayerMissingEvt(object sender, PlayerLeftEventArgs args)
         {
             logger.Info($"*** Player {SID(args.p2pId)} is MISSING!!! from group {args.groupChannel}");
         }
-        public void OnPlayerReturnedEvt(object sender, PlayerLeftArgs args)
+        public void OnPlayerReturnedEvt(object sender, PlayerLeftEventArgs args)
         {
             logger.Info($"*** Player {SID(args.p2pId)} has RETURNED!!! to group {args.groupChannel}");
         }
@@ -203,14 +204,15 @@ namespace BeamCli
         }
 
         // Bikes
-        public void OnNewBikeEvt(object sender, IBike ib)
+        public void OnNewBikeEvt(object sender, BikeEventArgs args)
         {
+            IBike ib = args?.ib;
             logger.Info($"OnNewBikeEvt(). Id: {SID(ib.bikeId)}, Local: {ib.peerId == appCore.LocalPeerId}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
             FrontendBike b = FeBikeFactory.Create(ib, ib.peerId == appCore.LocalPeerId);
             b.Setup(ib, beamAppl, appCore);
             feBikes[ib.bikeId] = b;
         }
-        public void OnBikeRemovedEvt(object sender, BikeRemovedData rData)
+        public void OnBikeRemovedEvt(object sender, BikeRemovedEventArgs rData)
         {
             logger.Info($"OnBikeRemovedEvt({(rData.doExplode ? "Boom!" : "(poof)")}). Id: {SID(rData.bikeId)}");
             feBikes.Remove(rData.bikeId);
@@ -224,7 +226,7 @@ namespace BeamCli
 
         // Places
 
-        public void OnPlaceHitEvt(object sender, PlaceHitArgs args)
+        public void OnPlaceHitEvt(object sender, PlaceHitEventArgs args)
         {
             // This intentionally accesses linked data to show issues
             // IBike bike = args.ib;
@@ -238,15 +240,17 @@ namespace BeamCli
             logger.Info($"OnPlaceHitEvt. Place: {args.p?.GetPos().ToString()}  Bike: {SID(args.ib?.bikeId)}");
         }
 
-        public void OnPlaceClaimedEvt(object sender, BeamPlace p)
+        public void OnPlaceClaimedEvt(object sender, BeamPlaceEventArgs args)
         {
+            BeamPlace p = args?.p;
             logger.Verbose($"OnPlaceClaimedEvt. Pos: {p?.GetPos().ToString()} Bike: {SID(p.bike.bikeId)}");
         }
 
         // Ground
 
-        public void OnPlaceFreedEvt(object sender, BeamPlace p)
+        public void OnPlaceFreedEvt(object sender, BeamPlaceEventArgs args)
         {
+            BeamPlace p = args?.p;
             logger.Debug($"OnFreePlace({p.xIdx}, {p.zIdx})");
         }
 

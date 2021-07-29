@@ -7,7 +7,7 @@ using UniLog;
 
 namespace BeamCli
 {
-    public class Program
+    public static class Program
     {
         public class CliOptions
         {
@@ -58,7 +58,7 @@ namespace BeamCli
             public bool ThrowOnError {get; set;}
         }
 
-        protected static BeamUserSettings GetSettings(string[] args)
+        public static BeamUserSettings GetSettings(string[] args)
         {
             BeamUserSettings settings = UserSettingsMgr.Load();
 
@@ -122,10 +122,10 @@ namespace BeamCli
     {
         public long targetFrameMs {get; private set;} = 16;
 
-        public BeamApplication appl = null;
+        public BeamApplication appl;
 
-        public BeamCliFrontend fe = null;
-        public BeamGameNet bgn = null;
+        public BeamCliFrontend fe;
+        public BeamGameNet bgn;
 
         public void Run(BeamUserSettings settings) {
             _Init(settings);
