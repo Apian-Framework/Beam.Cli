@@ -164,26 +164,10 @@ namespace BeamCli
 
         protected bool Loop(int frameMs)
         {
-            // first dispatch incoming messages
-            // while not self.netCmdQueue.empty():
-            //     cmd = self.netCmdQueue.get(block=False)
-            //     if cmd:
-            //         self._dispatch_net_cmd(cmd)
-            //         ge_sleep(0)  # yield
-
-
-            // while not self.feMsgQueue.empty():
-            //     cmd = self.feMsgQueue.get(block=False)
-            //     if cmd:
-            //         self._dispatch_fe_cmd(cmd)
-            //         ge_sleep(0)  # yield
-
-            // then update the game
-
             float frameSecs = (float)frameMs / 1000f;
-            bgn.Update();
-            fe.Loop(frameSecs);
-            return appl.Loop(frameSecs);
+            bgn.Update(); // dispatches incoming messages
+            fe.Loop(frameSecs); // update frontend
+            return appl.Loop(frameSecs); // Do game code loop
         }
 
         private long _TimeMs() =>  DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;

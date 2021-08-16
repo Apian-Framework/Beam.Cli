@@ -162,7 +162,7 @@ namespace BeamCli
             else
                 throw new Exception($"gameName setting missing.");
 
-            await Task.Delay(0).ConfigureAwait(false); // Yuk, But usually this is an async UI operation
+            await Task.Delay(0); // Yuk, But usually this is an async UI operation
             return new GameSelectedEventArgs(gameInfo, result);
         }
 
