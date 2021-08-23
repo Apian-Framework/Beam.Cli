@@ -110,9 +110,9 @@ namespace BeamCli
         public void OnEndMode(int modeId, object param) => _feModeHelper.OnEndMode(modeId, param);
         public void DispatchModeCmd(int modeId, int cmdId, object param) => _feModeHelper.DispatchCmd(modeId, cmdId, param);
 
-        public void OnNewCoreState(object sender, NewCoreStateEventArgs csArgs)
+        private void OnNewCoreState(object sender, NewCoreStateEventArgs csArgs)
         {
-            BeamCoreState newCoreState = csArgs.coreState;
+            BeamCoreState newCoreState = csArgs.coreState as BeamCoreState;
             newCoreState.PlaceFreedEvt += OnPlaceFreedEvt;
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
         }
