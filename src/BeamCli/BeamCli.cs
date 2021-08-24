@@ -166,8 +166,9 @@ namespace BeamCli
         {
             float frameSecs = (float)frameMs / 1000f;
             bgn.Update(); // dispatches incoming messages
+            bool keepRunning = appl.Loop(frameSecs); // Do game code loop
             fe.Loop(frameSecs); // update frontend
-            return appl.Loop(frameSecs); // Do game code loop
+            return keepRunning;
         }
 
         private long _TimeMs() =>  DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
