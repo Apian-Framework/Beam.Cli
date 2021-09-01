@@ -158,6 +158,8 @@ namespace BeamCli
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName]
                     : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
+
+                logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MaxPlayers}");
             }
             else
                 throw new Exception($"gameName setting missing.");
