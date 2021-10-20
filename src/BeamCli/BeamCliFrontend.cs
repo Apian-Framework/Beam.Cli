@@ -126,7 +126,7 @@ namespace BeamCli
         // and ends with the frontend setting the result for a passed-in TaskCompletionResult
 
         // In THIS case, we just return (but have to await something to be async)
-        public async Task<GameSelectedEventArgs> SelectGameAsync(IDictionary<string, BeamGameInfo> existingGames)
+        public async Task<GameSelectedEventArgs> SelectGameAsync(IDictionary<string, BeamGameAnnounceData> existingGames)
         {
             // gameName cli param can end in:
             //  '+' = means join the game if it exists, create if not
@@ -156,7 +156,7 @@ namespace BeamCli
 
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
-                gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName]
+                gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName].GameInfo
                     : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
 
                 logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MaxPlayers}");
