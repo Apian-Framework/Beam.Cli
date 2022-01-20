@@ -1,14 +1,13 @@
-using System.ComponentModel;
 using System;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-using System.Collections;
 using System.Collections.Generic;
 using Apian;
 using BeamGameCode;
-using BikeControl;
 using UniLog;
 using static UniLog.UniLogger; // for SID()
+
+#if !SINGLE_THREADED
+using System.Threading.Tasks;
+#endif
 
 namespace BeamCli
 {
@@ -18,19 +17,21 @@ namespace BeamCli
         public  Dictionary<string, FrontendBike> feBikes;
         public IBeamApplication beamAppl {get; private set;}
         public IBeamAppCore appCore {get; private set;}
-        protected BeamCliModeHelper _feModeHelper;
         protected BeamUserSettings userSettings;
         public UniLogger logger;
 
         private long prevGameTime;
 
+        Dictionary<int, Action<BeamGameMode, object>> modeStartActions;
+        Dictionary<int, Action<BeamGameMode, object>> modeEndActions;
+
         // Start is called before the first frame update
         public BeamCliFrontend(BeamUserSettings startupSettings)
         {
-            _feModeHelper = new BeamCliModeHelper(this);
             feBikes = new Dictionary<string, FrontendBike>();
             userSettings = startupSettings;
             logger = UniLogger.GetLogger("Frontend");
+            SetupModeActions();
         }
 
         public void SetBeamApplication(IBeamApplication appl)
@@ -58,7 +59,6 @@ namespace BeamCli
             core.PlaceHitEvt += OnPlaceHitEvt;
 
             core.ReadyToPlayEvt += OnReadyToPlay;
-
         }
 
         public virtual void Loop(float frameSecs)
@@ -83,6 +83,52 @@ namespace BeamCli
         // IBeamFrontend API
         //
 
+        //
+        // Backend game modes
+        //
+        protected void SetupModeActions()
+        {
+            modeStartActions = new Dictionary<int, Action<BeamGameMode, object>>()
+            {
+                { BeamModeFactory.kSplash, OnStartSplash},
+                { BeamModeFactory.kPractice, OnStartPractice},
+                { BeamModeFactory.kPlay, OnStartPlay},
+            };
+
+            modeEndActions = new Dictionary<int, Action<BeamGameMode, object>>()
+            {
+                { BeamModeFactory.kSplash, OnEndSplash},
+                { BeamModeFactory.kPractice, OnEndPractice},
+                { BeamModeFactory.kPlay, OnEndPlay},
+            };
+        }
+
+        public void OnStartMode(BeamGameMode mode, object param) => modeStartActions[mode.ModeId()](mode, param);
+        public void OnEndMode(BeamGameMode mode, object param) => modeEndActions[mode.ModeId()](mode, param);
+
+        protected void OnStartSplash(BeamGameMode mode, object param)
+        {
+            ((ModeSplash)mode).FeTargetCameraEvt += OnTargetCamera;
+        }
+        protected void OnEndSplash(BeamGameMode mode, object param)
+        {
+            ((ModeSplash)mode).FeTargetCameraEvt -= OnTargetCamera;
+        }
+        protected void OnStartPractice(BeamGameMode mode, object param) {}
+        protected void OnEndPractice(BeamGameMode mode, object param) {}
+
+        protected void OnStartPlay(BeamGameMode mode, object param) {}
+        protected void OnEndPlay(BeamGameMode mode, object param) {}
+
+        protected void OnTargetCamera(object sender, StringEventArgs args)
+        {
+            logger.Info($"OnTargetCamera(): Setting camera to {SID(args.str)}");
+        }
+
+
+        //
+
+
         public void DisplayMessage(MessageSeverity lvl, string msgText)
         {
             // Seems like an enum.ToString() is the name of the enum? So this isn't needed,
@@ -105,11 +151,6 @@ namespace BeamCli
 
         public BeamUserSettings GetUserSettings() => userSettings;
 
-        // Backend game modes
-        public void OnStartMode(int modeId, object param) =>  _feModeHelper.OnStartMode(modeId, param);
-        public void OnEndMode(int modeId, object param) => _feModeHelper.OnEndMode(modeId, param);
-        public void DispatchModeCmd(int modeId, int cmdId, object param) => _feModeHelper.DispatchCmd(modeId, cmdId, param);
-
         private void OnNewCoreState(object sender, NewCoreStateEventArgs csArgs)
         {
             BeamCoreState newCoreState = csArgs.coreState as BeamCoreState;
@@ -126,6 +167,7 @@ namespace BeamCli
         // and ends with the frontend setting the result for a passed-in TaskCompletionResult
 
         // In THIS case, we just return (but have to await something to be async)
+#if !SINGLE_THREADED
         public async Task<GameSelectedEventArgs> SelectGameAsync(IDictionary<string, BeamGameAnnounceData> existingGames)
         {
             // gameName cli param can end in:
@@ -167,7 +209,9 @@ namespace BeamCli
             await Task.Delay(0); // Yuk, But usually this is an async UI operation
             return new GameSelectedEventArgs(gameInfo, result);
         }
-
+#else
+    #warning Need a single-threaded SelectGame() impl!!
+#endif
         // Players
 
         public void OnPeerJoinedGameEvt(object sender, PeerJoinedEventArgs args)
