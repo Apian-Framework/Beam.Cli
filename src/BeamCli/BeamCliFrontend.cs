@@ -1,3 +1,4 @@
+#define SINGLE_THREADED
 using System;
 using System.Collections.Generic;
 using Apian;
@@ -210,7 +211,9 @@ namespace BeamCli
             return new GameSelectedEventArgs(gameInfo, result);
         }
 #else
-    #warning Need a single-threaded SelectGame() impl!!
+
+
+
 #endif
         // Players
 
