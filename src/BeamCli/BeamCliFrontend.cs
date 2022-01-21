@@ -1,4 +1,4 @@
-#define SINGLE_THREADED
+//#define SINGLE_THREADED
 using System;
 using System.Collections.Generic;
 using Apian;
@@ -210,11 +210,47 @@ namespace BeamCli
             await Task.Delay(0); // Yuk, But usually this is an async UI operation
             return new GameSelectedEventArgs(gameInfo, result);
         }
-#else
-
-
-
 #endif
+        public void SelectGame(IDictionary<string, BeamGameAnnounceData> existingGames)
+        {
+            // gameName cli param can end in:
+            //  '+' = means join the game if it exists, create if not
+            //  '*' = means create if it oes not exist. Error if it's already there
+            //  '' = "nothing" means join if it's there, or error
+            string gameName = null;
+            GameSelectedEventArgs.ReturnCode result;
+            BeamGameInfo gameInfo;
+
+            string groupType;
+            if (userSettings.tempSettings.TryGetValue("groupType", out groupType))
+            {
+                if (!BeamApianFactory.ApianGroupTypes.Contains(groupType))
+                    throw new Exception($"Unknown Group Type: {groupType}.");
+                logger.Warn($"Requested group type: {groupType}");
+            } else {
+                groupType = CreatorSezGroupManager.kGroupType;
+            }
+
+            string argStr;
+            if (userSettings.tempSettings.TryGetValue("gameName", out argStr))
+            {
+                gameName = argStr.TrimEnd( new [] {'+','*'} );
+                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
+                    : GameSelectedEventArgs.ReturnCode.kJoin;
+
+                // TODO: does the frontend have any busniess selecting an agreement type?
+                // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
+                gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName].GameInfo
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
+            }
+            else
+                throw new Exception($"gameName setting missing.");
+
+            // Info about BeamGameInfo creation lives in BeamGameNet
+
+            beamAppl.OnGameSelected( gameInfo, result );
+        }
+
         // Players
 
         public void OnPeerJoinedGameEvt(object sender, PeerJoinedEventArgs args)
