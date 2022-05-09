@@ -159,6 +159,11 @@ namespace BeamCli
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
         }
 
+        public void OnJoiningNetwork(string netName)
+        {
+            Console.WriteLine($"Joining network \"{netName}\" and waiting for peers.");
+        }
+
         // Game code calls with a list of the currently existing games
         // Since this is the CLI app, we mostly ignore that and fetch the "gameName" cli parameter
         // and use that (in a gui App we'd display the list + have a way for the player to
@@ -253,13 +258,13 @@ namespace BeamCli
 
         // Players
 
-        public void OnPeerJoinedGameEvt(object sender, PeerJoinedEventArgs args)
+        public void OnPeerJoinedNetEvt(object sender, PeerJoinedEventArgs args)
         {
-        ///     BeamGroupMember p = args.peer;
-        ///     logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {p.PeerId}");
+             BeamNetworkPeer p = args.peer;
+             logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {SID(p.PeerId)}");
         }
 
-        public void OnPeerLeftGameEvt(object sender, PeerLeftEventArgs args)
+        public void OnPeerLeftNetEvt(object sender, PeerLeftEventArgs args)
         {
             logger.Info($"OnPeerLeftEvt(): {SID(args.p2pId)}");
         }
