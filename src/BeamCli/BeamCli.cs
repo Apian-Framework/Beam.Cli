@@ -28,9 +28,9 @@ namespace BeamCli
 
 
             [Option(
-	            Default = -1,
+	            Default = null,
 	            HelpText = "Start with this GameMode" )]
-            public int StartMode {get; set;}
+            public string StartMode {get; set;}
 
             [Option(
 	            Default = null,
@@ -86,7 +86,7 @@ namespace BeamCli
                         if (o.GroupType != null)
                             settings.tempSettings["groupType"] = o.GroupType;
 
-                       if (o.StartMode != -1)
+                       if (o.StartMode != null)
                             settings.startMode = o.StartMode;
 
                         // TODO: would rather have the frontend implmentation determine this somehow
