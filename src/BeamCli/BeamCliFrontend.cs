@@ -159,10 +159,6 @@ namespace BeamCli
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
         }
 
-        public void OnJoiningNetwork(string netName)
-        {
-            Console.WriteLine($"Joining network \"{netName}\" and waiting for peers.");
-        }
 
         // Game code calls with a list of the currently existing games
         // Since this is the CLI app, we mostly ignore that and fetch the "gameName" cli parameter
