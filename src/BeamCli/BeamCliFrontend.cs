@@ -93,14 +93,14 @@ namespace BeamCli
             {
                 { BeamModeFactory.kSplash, OnStartSplash},
                 { BeamModeFactory.kPractice, OnStartPractice},
-                { BeamModeFactory.kPlay, OnStartPlay},
+                { BeamModeFactory.kNetwork, OnStartNetwork},
             };
 
             modeEndActions = new Dictionary<int, Action<BeamGameMode, object>>()
             {
                 { BeamModeFactory.kSplash, OnEndSplash},
                 { BeamModeFactory.kPractice, OnEndPractice},
-                { BeamModeFactory.kPlay, OnEndPlay},
+                { BeamModeFactory.kNetwork, OnEndNetwork},
             };
         }
 
@@ -118,8 +118,8 @@ namespace BeamCli
         protected void OnStartPractice(BeamGameMode mode, object param) {}
         protected void OnEndPractice(BeamGameMode mode, object param) {}
 
-        protected void OnStartPlay(BeamGameMode mode, object param) {}
-        protected void OnEndPlay(BeamGameMode mode, object param) {}
+        protected void OnStartNetwork(BeamGameMode mode, object param) {}
+        protected void OnEndNetwork(BeamGameMode mode, object param) {}
 
         protected void OnTargetCamera(object sender, StringEventArgs args)
         {
