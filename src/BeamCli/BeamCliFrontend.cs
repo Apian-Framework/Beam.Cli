@@ -63,6 +63,7 @@ namespace BeamCli
             core.ReadyToPlayEvt += OnReadyToPlay;
         }
 
+
         public virtual void Loop(float frameSecs)
         {
 
@@ -73,7 +74,7 @@ namespace BeamCli
                 {
                     logger.Info($"Network ready. Proceeding...");
                     msUntilNetReady = 0;
-                    beamAppl.OnNetworkReady(true);
+                    beamAppl.OnPushModeReq(BeamModeFactory.kNetPlay, null);
                 }
             }
 
@@ -108,6 +109,7 @@ namespace BeamCli
                 { BeamModeFactory.kSplash, OnStartSplash},
                 { BeamModeFactory.kPractice, OnStartPractice},
                 { BeamModeFactory.kNetwork, OnStartNetworkMode},
+                { BeamModeFactory.kNetPlay, OnStartNetPlay},
             };
 
             modeEndActions = new Dictionary<int, Action<BeamGameMode, object>>()
@@ -115,6 +117,7 @@ namespace BeamCli
                 { BeamModeFactory.kSplash, OnEndSplash},
                 { BeamModeFactory.kPractice, OnEndPractice},
                 { BeamModeFactory.kNetwork, OnEndNetworkMode},
+                { BeamModeFactory.kNetPlay, OnEndNetPlay},
             };
         }
 
@@ -147,6 +150,8 @@ namespace BeamCli
             beamAppl.PeerLeftEvt -= OnPeerLeftNetEvt;
         }
 
+       protected void OnStartNetPlay(BeamGameMode mode, object param) {}
+        protected void OnEndNetPlay(BeamGameMode mode, object param) {}
 
 
         protected void OnTargetCamera(object sender, StringEventArgs args)
@@ -184,6 +189,15 @@ namespace BeamCli
             Console.WriteLine($"** Network Info: Name: {netInfo.NetName}, Peers: {netInfo.PeerCount}, Games: {netInfo.GameCount}");
         }
 
+        public void OnNetworkReady()
+        {
+            if (msUntilNetReady == 0)
+            {
+                logger.Info($"OnNetworkReady(): waiting 5000ms...");
+                msUntilNetReady = 5000; // TODO: define somewhere
+            }
+        }
+
         public BeamUserSettings GetUserSettings() => userSettings;
 
         private void OnNewCoreState(object sender, NewCoreStateEventArgs csArgs)
@@ -192,17 +206,6 @@ namespace BeamCli
             newCoreState.PlaceFreedEvt += OnPlaceFreedEvt;
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
         }
-
-
-        public void SignalWhenNetworkReady()
-        {
-            if ( msUntilNetReady == 0)
-            {
-                msUntilNetReady = 5000;
-                logger.Info($"SignalWhenNetworkReady() - waiting {msUntilNetReady} ms...");
-            }
-        }
-
 
 
         // Game code calls with a list of the currently existing games
