@@ -22,6 +22,7 @@ namespace BeamCli
         public UniLogger logger;
 
         private long prevGameTime;
+        private int msUntilNetReady; // non-zero if waiting
 
         Dictionary<int, Action<BeamGameMode, object>> modeStartActions;
         Dictionary<int, Action<BeamGameMode, object>> modeEndActions;
@@ -64,6 +65,19 @@ namespace BeamCli
 
         public virtual void Loop(float frameSecs)
         {
+
+            if (msUntilNetReady > 0)
+            {
+                msUntilNetReady -= (int)(frameSecs * 1000f);
+                if (msUntilNetReady <= 0)
+                {
+                    logger.Info($"Network ready. Proceeding...");
+                    msUntilNetReady = 0;
+                    beamAppl.OnNetworkReady(true);
+                }
+            }
+
+
             if (appCore == null)
                 return;
 
@@ -93,14 +107,14 @@ namespace BeamCli
             {
                 { BeamModeFactory.kSplash, OnStartSplash},
                 { BeamModeFactory.kPractice, OnStartPractice},
-                { BeamModeFactory.kNetwork, OnStartNetwork},
+                { BeamModeFactory.kNetwork, OnStartNetworkMode},
             };
 
             modeEndActions = new Dictionary<int, Action<BeamGameMode, object>>()
             {
                 { BeamModeFactory.kSplash, OnEndSplash},
                 { BeamModeFactory.kPractice, OnEndPractice},
-                { BeamModeFactory.kNetwork, OnEndNetwork},
+                { BeamModeFactory.kNetwork, OnEndNetworkMode},
             };
         }
 
@@ -118,8 +132,22 @@ namespace BeamCli
         protected void OnStartPractice(BeamGameMode mode, object param) {}
         protected void OnEndPractice(BeamGameMode mode, object param) {}
 
-        protected void OnStartNetwork(BeamGameMode mode, object param) {}
-        protected void OnEndNetwork(BeamGameMode mode, object param) {}
+        protected void OnStartNetworkMode(BeamGameMode mode, object param)
+        {
+            logger.Info($"OnStartNetworkMode(): Listening for network events");
+            beamAppl.GameAnnounceEvt += OnGameAnnounceEvt;
+            beamAppl.PeerJoinedEvt += OnPeerJoinedNetEvt;
+            beamAppl.PeerLeftEvt += OnPeerLeftNetEvt;
+        }
+        protected void OnEndNetworkMode(BeamGameMode mode, object param)
+        {
+            logger.Info($"OnEndNetworkMode(): No longer listening for network events");
+            beamAppl.GameAnnounceEvt -= OnGameAnnounceEvt;
+            beamAppl.PeerJoinedEvt -= OnPeerJoinedNetEvt;
+            beamAppl.PeerLeftEvt -= OnPeerLeftNetEvt;
+        }
+
+
 
         protected void OnTargetCamera(object sender, StringEventArgs args)
         {
@@ -150,6 +178,12 @@ namespace BeamCli
 
         }
 
+        public void UpdateNetworkInfo()
+        {
+            BeamNetInfo netInfo = beamAppl.NetInfo;
+            Console.WriteLine($"** Network Info: Name: {netInfo.NetName}, Peers: {netInfo.PeerCount}, Games: {netInfo.GameCount}");
+        }
+
         public BeamUserSettings GetUserSettings() => userSettings;
 
         private void OnNewCoreState(object sender, NewCoreStateEventArgs csArgs)
@@ -158,6 +192,17 @@ namespace BeamCli
             newCoreState.PlaceFreedEvt += OnPlaceFreedEvt;
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
         }
+
+
+        public void SignalWhenNetworkReady()
+        {
+            if ( msUntilNetReady == 0)
+            {
+                msUntilNetReady = 5000;
+                logger.Info($"SignalWhenNetworkReady() - waiting {msUntilNetReady} ms...");
+            }
+        }
+
 
 
         // Game code calls with a list of the currently existing games
@@ -252,18 +297,31 @@ namespace BeamCli
             beamAppl.OnGameSelected( gameInfo, result );
         }
 
-        // Players
+        //
+        // Event handlers
+        //
+
+        // Network information events
 
         public void OnPeerJoinedNetEvt(object sender, PeerJoinedEventArgs args)
         {
-             BeamNetworkPeer p = args.peer;
-             logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {SID(p.PeerId)}");
+            BeamNetworkPeer p = args.peer;
+            logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {SID(p.PeerId)}");
+            UpdateNetworkInfo();
         }
 
         public void OnPeerLeftNetEvt(object sender, PeerLeftEventArgs args)
         {
             logger.Info($"OnPeerLeftEvt(): {SID(args.p2pId)}");
+            UpdateNetworkInfo();
         }
+
+        public void OnGameAnnounceEvt(object sender, GameAnnounceEventArgs args)
+        {
+            UpdateNetworkInfo();
+        }
+
+        // Players
 
         public void OnPlayerJoinedEvt(object sender, PlayerJoinedEventArgs args)
         {
