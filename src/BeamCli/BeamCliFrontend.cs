@@ -22,7 +22,6 @@ namespace BeamCli
         public UniLogger logger;
 
         private long prevGameTime;
-        private int msUntilNetReady; // non-zero if waiting
 
         Dictionary<int, Action<BeamGameMode, object>> modeStartActions;
         Dictionary<int, Action<BeamGameMode, object>> modeEndActions;
@@ -66,18 +65,6 @@ namespace BeamCli
 
         public virtual void Loop(float frameSecs)
         {
-
-            if (msUntilNetReady > 0)
-            {
-                msUntilNetReady -= (int)(frameSecs * 1000f);
-                if (msUntilNetReady <= 0)
-                {
-                    logger.Info($"Network ready. Proceeding...");
-                    msUntilNetReady = 0;
-                    beamAppl.OnPushModeReq(BeamModeFactory.kNetPlay, null);
-                }
-            }
-
 
             if (appCore == null)
                 return;
@@ -191,11 +178,8 @@ namespace BeamCli
 
         public void OnNetworkReady()
         {
-            if (msUntilNetReady == 0)
-            {
-                logger.Info($"OnNetworkReady(): waiting 5000ms...");
-                msUntilNetReady = 5000; // TODO: define somewhere
-            }
+            logger.Info($"OnNetworkReady(). Pushing ModeNetPlay");
+            beamAppl.OnPushModeReq(BeamModeFactory.kNetPlay, null);
         }
 
         public BeamUserSettings GetUserSettings() => userSettings;
