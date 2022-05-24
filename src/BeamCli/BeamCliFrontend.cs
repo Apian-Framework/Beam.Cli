@@ -110,6 +110,9 @@ namespace BeamCli
 
         public void OnStartMode(BeamGameMode mode, object param) => modeStartActions[mode.ModeId()](mode, param);
         public void OnEndMode(BeamGameMode mode, object param) => modeEndActions[mode.ModeId()](mode, param);
+        public void OnResumeMode(BeamGameMode mode, object param) {}
+        public void OnPauseMode(BeamGameMode mode, object param) {}
+
 
         protected void OnStartSplash(BeamGameMode mode, object param)
         {
@@ -139,7 +142,6 @@ namespace BeamCli
 
        protected void OnStartNetPlay(BeamGameMode mode, object param) {}
         protected void OnEndNetPlay(BeamGameMode mode, object param) {}
-
 
         protected void OnTargetCamera(object sender, StringEventArgs args)
         {
