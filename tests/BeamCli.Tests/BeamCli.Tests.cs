@@ -38,10 +38,11 @@ namespace BeamCliTests
         [Test]
         public void CliDriver_Init()
         {
-            Mock<BeamUserSettings> settings = new Mock<BeamUserSettings>();
+            BeamUserSettings settings = new BeamUserSettings();
+            settings.startMode = "network"; // THis is really stupid and not really unit testing
 
             CliDriverWrapper drvw = new CliDriverWrapper();
-            drvw.CallInit(settings.Object);
+            drvw.CallInit(settings);
 
             Assert.That(drvw.fe, Is.InstanceOf<BeamCliFrontend>());
             Assert.That(drvw.bgn, Is.InstanceOf<BeamGameNet>());
@@ -62,7 +63,7 @@ namespace BeamCliTests
         }
 
 
-        [TestCase("--startmode,2", "startMode", 2)]
+        [TestCase("--startmode,network", "startMode", "network")]
         [TestCase("--bikectrl,ai", "localPlayerCtrlType", "ai")]
         [TestCase("--defloglvl,info", "defaultLogLevel", "info")]
         [TestCase("--throwonerror,true", "DefaultThrowOnError", true)]
