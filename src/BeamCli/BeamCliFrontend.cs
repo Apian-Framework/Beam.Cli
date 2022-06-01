@@ -229,12 +229,12 @@ namespace BeamCli
 
 
                 gameName = argStr.TrimEnd( new [] {'+','*'} );
-                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
+                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.ContainsKey(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
                     : GameSelectedEventArgs.ReturnCode.kJoin;
 
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
-                gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName].GameInfo
+                gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
                     : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
 
                 logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MaxPlayers}");
@@ -270,12 +270,12 @@ namespace BeamCli
             if (userSettings.tempSettings.TryGetValue("gameName", out argStr))
             {
                 gameName = argStr.TrimEnd( new [] {'+','*'} );
-                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.Keys.Contains(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
+                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.ContainsKey(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
                     : GameSelectedEventArgs.ReturnCode.kJoin;
 
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
-                gameInfo = existingGames.Keys.Contains(gameName) ? existingGames[gameName].GameInfo
+                gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
                     : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
             }
             else
