@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using CommandLine;
+using Nito.AsyncEx;
 using BeamGameCode;
 using UniLog;
 
@@ -104,7 +106,21 @@ namespace BeamCli
             return settings;
         }
 
-        public static void Main(string[] args)
+
+        public static int Main(string[] args)
+        {
+            try
+            {
+                return AsyncContext.Run(() => AsyncMain(args));
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                return -1;
+            }
+        }
+
+        static async Task<int> AsyncMain(string[] args)
         {
             BeamUserSettings settings = GetSettings(args);
             if (settings != null)
@@ -112,8 +128,9 @@ namespace BeamCli
                 UniLogger.DefaultLevel = UniLogger.LevelFromName(settings.defaultLogLevel);
                 UniLogger.SetupLevels(settings.logLevels);
                 CliDriver drv = new CliDriver();
-                drv.Run(settings);
+                return await drv.Run(settings);
             }
+            return -1;
         }
     }
 
@@ -127,9 +144,9 @@ namespace BeamCli
         public BeamCliFrontend fe;
         public BeamGameNet bgn;
 
-        public void Run(BeamUserSettings settings) {
+        public async Task<int> Run(BeamUserSettings settings) {
             _Init(settings);
-            LoopUntilDone();
+            return await LoopUntilDone();
         }
 
         protected void _Init(BeamUserSettings settings)
@@ -140,7 +157,7 @@ namespace BeamCli
             appl.Start(settings.startMode);
         }
 
-        protected void LoopUntilDone()
+        protected async Task<int> LoopUntilDone()
         {
             bool keepRunning = true;
             long frameStartMs = _TimeMs() - targetFrameMs;;
@@ -158,8 +175,11 @@ namespace BeamCli
                 //UnityEngine.Debug.Log(string.Format("Elapsed ms: {0}, Wait ms: {1}",elapsedMs, waitMs));
                 if (waitMs <= 0)
                     waitMs = 1;
-                Thread.Sleep(waitMs);
+
+                await Task.Delay(waitMs);
+                //Thread.Sleep(waitMs);
             }
+            return 0;
         }
 
         protected bool Loop(int frameMs)
