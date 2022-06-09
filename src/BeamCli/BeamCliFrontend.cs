@@ -86,6 +86,24 @@ namespace BeamCli
         // IBeamFrontend API
         //
 
+        private readonly Dictionary<ApianGroupMember.Status, string> statusNames = new Dictionary<ApianGroupMember.Status, string>{
+            {ApianGroupMember.Status.New, "New"},
+            {ApianGroupMember.Status.Joining, "Joining"},
+            {ApianGroupMember.Status.SyncingState, "SyncingState"},
+            {ApianGroupMember.Status.SyncingClock, "SyncingClock"},
+            {ApianGroupMember.Status.Active, "Active"},
+            {ApianGroupMember.Status.Removed, "Removed"}
+        };
+
+        public void OnGroupMemberStatus(string groupId, string peerId, ApianGroupMember.Status newStatus, ApianGroupMember.Status prevStatus)
+        {
+            if ( peerId == appCore?.LocalPeerId )
+            {
+                Console.WriteLine( $">>> Local Peer is: \"{statusNames[newStatus]}\"");
+            }
+
+        }
+
         //
         // Backend game modes
         //
