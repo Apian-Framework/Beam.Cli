@@ -323,6 +323,12 @@ namespace BeamCli
             UpdateNetworkInfo();
         }
 
+        public void OnGroupLeaderChanged(string groupId, string newLeaderId, string lname)
+        {
+            string msg = (lname != null) ? $"{lname} {SID(newLeaderId)}"  : SID(newLeaderId);
+            Console.WriteLine( $"Group Leader: {msg}");
+        }
+
         public void OnGameAnnounceEvt(object sender, GameAnnounceEventArgs args)
         {
             UpdateNetworkInfo();
