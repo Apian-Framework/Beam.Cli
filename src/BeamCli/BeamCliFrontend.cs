@@ -92,7 +92,7 @@ namespace BeamCli
             {ApianGroupMember.Status.SyncingState, "SyncingState"},
             {ApianGroupMember.Status.SyncingClock, "SyncingClock"},
             {ApianGroupMember.Status.Active, "Active"},
-            {ApianGroupMember.Status.Removed, "Removed"}
+            {ApianGroupMember.Status.Gone, "Gone"}
         };
 
         public void OnGroupMemberStatus(string groupId, string peerId, ApianGroupMember.Status newStatus, ApianGroupMember.Status prevStatus)
