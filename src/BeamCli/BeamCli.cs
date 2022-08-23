@@ -101,8 +101,6 @@ namespace BeamCli
                         settings = null;
                     });
 
-            if (settings != null)
-                UserSettingsMgr.Save(settings);
             return settings;
         }
 
@@ -125,8 +123,12 @@ namespace BeamCli
             BeamUserSettings settings = GetSettings(args);
             if (settings != null)
             {
+                // TODO: UniLogger settings loading and saving should all happen in the same place, rather
+                // than some here, some in BeamUserSettings and some in UniLogger itself
                 UniLogger.DefaultLevel = UniLogger.LevelFromName(settings.defaultLogLevel);
                 UniLogger.SetupLevels(settings.logLevels);
+
+                UserSettingsMgr.Save(settings);
                 CliDriver drv = new CliDriver();
                 return await drv.Run(settings);
             }
