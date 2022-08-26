@@ -325,8 +325,9 @@ namespace BeamCli
 
         public void OnGroupLeaderChanged(string groupId, string newLeaderId, string lname)
         {
+            string where = newLeaderId == appCore.LocalPeerId ? "local" : "remote";
             string msg = (lname != null) ? $"{lname} {SID(newLeaderId)}"  : SID(newLeaderId);
-            Console.WriteLine( $"Group Leader: {msg}");
+            Console.WriteLine( $"Group Leader ({where}): {msg}");
         }
 
         public void OnGameAnnounceEvt(object sender, GameAnnounceEventArgs args)
