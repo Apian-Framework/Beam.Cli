@@ -10,7 +10,10 @@
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
-  <Target Name="ShowEnv">
+  <Target Name="ShowEnv" BeforeTargets="BeforeBuild">
+      <Message Text=" " Importance="high" />
+      <Message Text="-------------------------------------------------------------------------------------" Importance="high" />
+      <Message Text="Build Environment:" Importance="high" />
       <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" Importance="high" />
       <Message Text="MSBuildThisFileDirectory = $(MSBuildThisFileDirectory)" Importance="high" />
       <Message Text=" " Importance="high" />
@@ -25,6 +28,8 @@
       <Message Text="OutDir = $(OutDir)" Importance="high" />
       <Message Text="IntDir = $(IntDir)" Importance="high" />
       <Message Text="TargetDir = $(TargetDir)" Importance="high" />
+      <Message Text="-------------------------------------------------------------------------------------" Importance="high" />
+      <Message Text=" " Importance="high" />
   </Target>
 
 
