@@ -51,6 +51,16 @@ namespace BeamCli
                 DisplayMessage(MessageSeverity.Info, $"Loaded Eth acct: {addr} from settings");
             }
 
+            // Stupid temporary test
+            string msg = "Ya Ya! Ya Ya ya.";
+            string sig = cryptoThing.EncodeUTF8AndSign(msg);
+
+            DisplayMessage(MessageSeverity.Info, $"Message: {msg}");
+            DisplayMessage(MessageSeverity.Info, $"Signature: {sig}");
+
+            string recAddr = cryptoThing.EncodeUTF8AndEcRecover(msg, sig);
+            DisplayMessage(MessageSeverity.Info, $"Recovered addr: {recAddr}");
+
         }
 
         public void SetBeamApplication(IBeamApplication appl)
