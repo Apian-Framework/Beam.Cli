@@ -62,7 +62,13 @@ namespace BeamCli
 
         public static BeamUserSettings GetSettings(string[] args)
         {
-            BeamUserSettings settings = UserSettingsMgr.Load();
+            BeamUserSettings settings;
+            try {
+                 settings = UserSettingsMgr.Load();
+            } catch (UserSettingsException ex) {
+                Console.WriteLine($"WARNING: {ex.Message}. Using default settings.");
+                settings = BeamUserSettings.CreateDefault();
+            }
 
             Parser.Default.ParseArguments<CliOptions>(args)
                     .WithParsed<CliOptions>(o =>
