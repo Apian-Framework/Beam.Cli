@@ -6,6 +6,8 @@ using BeamGameCode;
 using UniLog;
 using static UniLog.UniLogger; // for SID()
 
+using CryptoForApian;
+
 #if !SINGLE_THREADED
 using System.Threading.Tasks;
 #endif
@@ -20,8 +22,9 @@ namespace BeamCli
         public IBeamAppCore appCore {get; private set;}
         protected BeamUserSettings userSettings;
         public UniLogger logger;
-
         private long prevGameTime;
+
+        public ICryptoForApian cryptoThing;
 
         Dictionary<int, Action<BeamGameMode, object>> modeStartActions;
         Dictionary<int, Action<BeamGameMode, object>> modeEndActions;
@@ -33,6 +36,21 @@ namespace BeamCli
             userSettings = startupSettings;
             logger = UniLogger.GetLogger("Frontend");
             SetupModeActions();
+
+            cryptoThing = EthForApian.Create();
+
+            if (string.IsNullOrEmpty(userSettings.cryptoAcctJSON))
+            {
+                string addr =  cryptoThing.CreateAccount();
+                string json = cryptoThing.GetJsonForAccount("password");
+                DisplayMessage(MessageSeverity.Info, $"Created new Eth acct: {addr}");
+                userSettings.cryptoAcctJSON = json;
+                UserSettingsMgr.Save(userSettings);
+            } else {
+                string addr = cryptoThing.CreateAccountFromJson("password", userSettings.cryptoAcctJSON);
+                DisplayMessage(MessageSeverity.Info, $"Loaded Eth acct: {addr} from settings");
+            }
+
         }
 
         public void SetBeamApplication(IBeamApplication appl)
