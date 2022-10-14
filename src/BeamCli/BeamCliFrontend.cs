@@ -6,7 +6,7 @@ using BeamGameCode;
 using UniLog;
 using static UniLog.UniLogger; // for SID()
 
-using CryptoForApian;
+using ApianCrypto;
 
 #if !SINGLE_THREADED
 using System.Threading.Tasks;
@@ -24,7 +24,7 @@ namespace BeamCli
         public UniLogger logger;
         private long prevGameTime;
 
-        public ICryptoForApian cryptoThing;
+        public IApianCrypto cryptoThing;
 
         Dictionary<int, Action<BeamGameMode, object>> modeStartActions;
         Dictionary<int, Action<BeamGameMode, object>> modeEndActions;
