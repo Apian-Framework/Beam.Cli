@@ -46,6 +46,11 @@ namespace BeamCli
 
             [Option(
 	            Default = false,
+	            HelpText = "Interactive CLI Frontend")]
+            public bool Interactive {get; set;}
+
+            [Option(
+	            Default = false,
 	            HelpText = "Force default user settings (other than CLI options")]
             public bool ForceDefaultSettings {get; set;}
 
@@ -84,6 +89,9 @@ namespace BeamCli
 
                         if (o.DefLogLvl != null)
                             settings.defaultLogLevel = o.DefLogLvl;
+
+                        if (o.Interactive)
+                            settings.tempSettings["interactive"] = "true";
 
                         if (o.NetName != null)
                             settings.apianNetworkName = o.NetName;
@@ -150,6 +158,7 @@ namespace BeamCli
         public BeamApplication appl;
 
         public BeamCliFrontend fe;
+
         public BeamGameNet bgn;
 
         public async Task<int> Run(BeamUserSettings settings) {
@@ -157,9 +166,18 @@ namespace BeamCli
             return await LoopUntilDone();
         }
 
+
         protected void _Init(BeamUserSettings settings)
         {
-            fe = new BeamCliFrontend(settings);
+            if ( settings.tempSettings.ContainsKey("interactive")  && settings.tempSettings["interactive"] == "true" )
+            {
+                string s = "Creating Interactive Frontend";
+                Console.Write($"{s}");
+                fe = new InteractiveBeamCliFE(settings);
+            } else {
+                fe = new BeamCliFrontend(settings);
+            }
+
             bgn = new BeamGameNet(); // TODO: config/settings?
             appl = new BeamApplication(bgn, fe);
             appl.Start(settings.startMode);

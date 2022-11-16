@@ -1,5 +1,6 @@
 //#define SINGLE_THREADED
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Apian;
 using BeamGameCode;
@@ -454,16 +455,103 @@ namespace BeamCli
 
     }
 
-    public class IntBeamCliFrontend : BeamCliFrontend
+
+
+    public class InteractiveBeamCliFE : BeamCliFrontend
     {
-        public IntBeamCliFrontend(BeamUserSettings startupSettings) : base(startupSettings)
+
+        protected class CliCommand {
+            public string prompt;
+            public Action act;
+
+            public CliCommand(string p, Action a) { prompt = p; act = a; }
+        };
+
+        protected Dictionary<ConsoleKey, CliCommand> commands;
+
+
+
+
+        public InteractiveBeamCliFE(BeamUserSettings startupSettings) : base(startupSettings)
         {
+            Console.Clear();
+
+            commands= new Dictionary<ConsoleKey, CliCommand>()
+            {
+                {ConsoleKey.P, new CliCommand("p) Pause", DoPause)},
+                {ConsoleKey.R, new CliCommand("r) Resume", DoResume)},
+                {ConsoleKey.Q, new CliCommand("q) Quit", DoQuit)},
+            };
 
         }
 
         public override void Loop(float frameSecs)
         {
             base.Loop(frameSecs);
+            Render();
+
+            while (Console.KeyAvailable)
+            {
+                ConsoleKeyInfo k = Console.ReadKey();
+                if ( k.Modifiers == 0 )
+                {
+                    if (commands.ContainsKey(k.Key))
+                        commands[k.Key].act();
+                }
+
+            }
+
+        }
+
+        protected void Render() {
+
+            string prompt = string.Join(" ", commands.Values.Select( (cmd) => cmd.prompt).ToArray());
+
+            string disp = "---------------------------------------------------------------------------------------------------\n"
+                          + $"{prompt}                                                                                        \n"
+                          + "---------------------------------------------------------------------------------------------------\n";
+
+            //  (x, y) = Console.GetCursorPosition();
+            int x = Console.CursorLeft;
+            int y = Console.CursorTop;
+            WriteAt(disp, 0, 0);
+            Console.SetCursorPosition(x, y);
+        }
+
+        protected void WriteAt(string s, int x, int y)
+        {
+            try
+            {
+                Console.SetCursorPosition(x, y);
+                Console.Write(s);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.Clear();
+                Console.WriteLine(e.Message);
+            }
+        }
+
+
+        public void DoPause()
+        {
+            BeamApplication ba = beamAppl as BeamApplication;
+            BeamGameNet bgn = ba.beamGameNet as BeamGameNet;
+		    string groupId = ba.mainAppCore.ApianGroupId;
+            bgn.SendPauseReq(groupId, "I asked for it", "555");
+        }
+
+        public void DoResume()
+        {
+            BeamApplication ba = beamAppl as BeamApplication;
+            BeamGameNet bgn = ba.beamGameNet as BeamGameNet;
+		    string groupId = ba.mainAppCore.ApianGroupId;
+            bgn.SendResumeReq(groupId, "555");
+        }
+
+        public void DoQuit()
+        {
+            beamAppl.OnPopModeReq(null);
         }
 
     }
