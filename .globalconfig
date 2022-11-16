@@ -7,3 +7,4 @@
 
 dotnet_diagnostic.CA1014.severity = suggestion # Mark assemblies with CLSCompliant
 dotnet_diagnostic.CA1016.severity = suggestion #  Mark assemblies with assembly version
+dotnet_diagnostic.CA1303.severity = none # Don't pass non-localized strings to Console.Write
