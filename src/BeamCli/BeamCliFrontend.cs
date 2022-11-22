@@ -124,9 +124,9 @@ namespace BeamCli
             {ApianGroupMember.Status.Gone, "Gone"}
         };
 
-        public void OnGroupMemberStatus(string groupId, string peerId, ApianGroupMember.Status newStatus, ApianGroupMember.Status prevStatus)
+        public void OnGroupMemberStatus(string groupId, string peerAddr, ApianGroupMember.Status newStatus, ApianGroupMember.Status prevStatus)
         {
-            if ( peerId == appCore?.LocalPeerId )
+            if ( peerAddr == appCore?.LocalPeerAddr )
             {
                 Console.WriteLine( $">>> Local Peer is: \"{statusNames[newStatus]}\"");
             }
@@ -342,19 +342,19 @@ namespace BeamCli
         public void OnPeerJoinedNetEvt(object sender, PeerJoinedEventArgs args)
         {
             BeamNetworkPeer p = args.peer;
-            logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {SID(p.PeerId)}");
+            logger.Info($"OnPeerJoinedEvt() name: {p.Name}, Id: {SID(p.PeerAddr)}");
             UpdateNetworkInfo();
         }
 
         public void OnPeerLeftNetEvt(object sender, PeerLeftEventArgs args)
         {
-            logger.Info($"OnPeerLeftEvt(): {SID(args.p2pId)}");
+            logger.Info($"OnPeerLeftEvt(): {SID(args.peerAddr)}");
             UpdateNetworkInfo();
         }
 
         public void OnGroupLeaderChanged(string groupId, string newLeaderId, string lname)
         {
-            string where = newLeaderId == appCore.LocalPeerId ? "local" : "remote";
+            string where = newLeaderId == appCore.LocalPeerAddr ? "local" : "remote";
             string msg = (lname != null) ? $"{lname} {SID(newLeaderId)}"  : SID(newLeaderId);
             Console.WriteLine( $"Group Leader ({where}): {msg}");
         }
@@ -369,7 +369,7 @@ namespace BeamCli
         public void OnPlayerJoinedEvt(object sender, PlayerJoinedEventArgs args)
         {
             // Player joined means a group has been joined AND is synced (ready to go)
-            if ( args.player.PeerId == appCore.LocalPeerId )
+            if ( args.player.PeerAddr == appCore.LocalPeerAddr )
             {
                  logger.Info($"*** Successfully joined Apian group: {args.groupChannel}");
             }
@@ -377,11 +377,11 @@ namespace BeamCli
 
         public void OnPlayerMissingEvt(object sender, PlayerLeftEventArgs args)
         {
-            logger.Info($"*** Player {SID(args.p2pId)} is MISSING!!! from group {args.groupChannel}");
+            logger.Info($"*** Player {SID(args.peerAddr)} is MISSING!!! from group {args.groupChannel}");
         }
         public void OnPlayerReturnedEvt(object sender, PlayerLeftEventArgs args)
         {
-            logger.Info($"*** Player {SID(args.p2pId)} has RETURNED!!! to group {args.groupChannel}");
+            logger.Info($"*** Player {SID(args.peerAddr)} has RETURNED!!! to group {args.groupChannel}");
         }
 
         public void OnPlayersClearedEvt(object sender, EventArgs e)
@@ -394,8 +394,8 @@ namespace BeamCli
         public void OnNewBikeEvt(object sender, BikeEventArgs args)
         {
             IBike ib = args?.ib;
-            logger.Info($"OnNewBikeEvt(). Id: {SID(ib.bikeId)}, Local: {ib.peerId == appCore.LocalPeerId}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
-            FrontendBike b = FeBikeFactory.Create(ib, ib.peerId == appCore.LocalPeerId);
+            logger.Info($"OnNewBikeEvt(). Id: {SID(ib.bikeId)}, Local: {ib.peerAddr == appCore.LocalPeerAddr}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
+            FrontendBike b = FeBikeFactory.Create(ib, ib.peerAddr == appCore.LocalPeerAddr);
             b.Setup(ib, beamAppl, appCore);
             feBikes[ib.bikeId] = b;
         }
@@ -417,12 +417,12 @@ namespace BeamCli
         {
             // This intentionally accesses linked data to show issues
             // IBike bike = args.ib;
-            // string bikeOwner = bike.peerId;
+            // string bikeOwner = bike.peerAddr;
 
             // BeamPlace place = args.p;
             // IBike createdBy = place.bike;  // TODO: CRASH happens here. When no longer useful make it bulletproof
             //                                // (would rather make it not happen - not sure if that's possible)
-            // string placeOwner = createdBy.peerId;
+            // string placeOwner = createdBy.peerAddr;
 
             logger.Info($"OnPlaceHitEvt. Place: {args.p?.GetPos().ToString()}  Bike: {SID(args.ib?.bikeId)}");
         }
