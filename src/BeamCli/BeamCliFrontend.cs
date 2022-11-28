@@ -369,7 +369,7 @@ namespace BeamCli
         public void OnPlayerJoinedEvt(object sender, PlayerJoinedEventArgs args)
         {
             // Player joined means a group has been joined AND is synced (ready to go)
-            if ( args.player.PeerAddr == appCore.LocalPlayerAddr )
+            if ( args.player.PlayerAddr == appCore.LocalPlayerAddr )
             {
                  logger.Info($"*** Successfully joined Apian group: {args.groupChannel}");
             }
