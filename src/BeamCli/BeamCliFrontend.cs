@@ -126,7 +126,7 @@ namespace BeamCli
 
         public void OnGroupMemberStatus(string groupId, string peerAddr, ApianGroupMember.Status newStatus, ApianGroupMember.Status prevStatus)
         {
-            if ( peerAddr == appCore?.LocalPeerAddr )
+            if ( peerAddr == appCore?.LocalPlayerAddr )
             {
                 Console.WriteLine( $">>> Local Peer is: \"{statusNames[newStatus]}\"");
             }
@@ -352,10 +352,10 @@ namespace BeamCli
             UpdateNetworkInfo();
         }
 
-        public void OnGroupLeaderChanged(string groupId, string newLeaderId, string lname)
+        public void OnGroupLeaderChanged(string groupId, string newLeaderAddr, string lname)
         {
-            string where = newLeaderId == appCore.LocalPeerAddr ? "local" : "remote";
-            string msg = (lname != null) ? $"{lname} {SID(newLeaderId)}"  : SID(newLeaderId);
+            string where = newLeaderAddr == appCore.LocalPlayerAddr ? "local" : "remote";
+            string msg = (lname != null) ? $"{lname} {SID(newLeaderAddr)}"  : SID(newLeaderAddr);
             Console.WriteLine( $"Group Leader ({where}): {msg}");
         }
 
@@ -369,7 +369,7 @@ namespace BeamCli
         public void OnPlayerJoinedEvt(object sender, PlayerJoinedEventArgs args)
         {
             // Player joined means a group has been joined AND is synced (ready to go)
-            if ( args.player.PeerAddr == appCore.LocalPeerAddr )
+            if ( args.player.PeerAddr == appCore.LocalPlayerAddr )
             {
                  logger.Info($"*** Successfully joined Apian group: {args.groupChannel}");
             }
@@ -377,11 +377,11 @@ namespace BeamCli
 
         public void OnPlayerMissingEvt(object sender, PlayerLeftEventArgs args)
         {
-            logger.Info($"*** Player {SID(args.peerAddr)} is MISSING!!! from group {args.groupChannel}");
+            logger.Info($"*** Player {SID(args.playerAddr)} is MISSING!!! from group {args.groupChannel}");
         }
         public void OnPlayerReturnedEvt(object sender, PlayerLeftEventArgs args)
         {
-            logger.Info($"*** Player {SID(args.peerAddr)} has RETURNED!!! to group {args.groupChannel}");
+            logger.Info($"*** Player {SID(args.playerAddr)} has RETURNED!!! to group {args.groupChannel}");
         }
 
         public void OnPlayersClearedEvt(object sender, EventArgs e)
@@ -394,8 +394,8 @@ namespace BeamCli
         public void OnNewBikeEvt(object sender, BikeEventArgs args)
         {
             IBike ib = args?.ib;
-            logger.Info($"OnNewBikeEvt(). Id: {SID(ib.bikeId)}, Local: {ib.peerAddr == appCore.LocalPeerAddr}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
-            FrontendBike b = FeBikeFactory.Create(ib, ib.peerAddr == appCore.LocalPeerAddr);
+            logger.Info($"OnNewBikeEvt(). Id: {SID(ib.bikeId)}, Local: {ib.playerAddr == appCore.LocalPlayerAddr}, AI: {ib.ctrlType == BikeFactory.AiCtrl}");
+            FrontendBike b = FeBikeFactory.Create(ib, ib.playerAddr == appCore.LocalPlayerAddr);
             b.Setup(ib, beamAppl, appCore);
             feBikes[ib.bikeId] = b;
         }
