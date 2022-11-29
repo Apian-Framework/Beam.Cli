@@ -19,6 +19,11 @@ namespace BeamCli
             public string GameName {get; set;}
 
             [Option(
+	            Default = false,
+	            HelpText = "Create temporary crypto acct")]
+            public bool TempAcct {get; set;}
+
+            [Option(
 	            Default = null,
 	            HelpText = "Apian Network name" )]
             public string NetName {get; set;}
@@ -89,6 +94,9 @@ namespace BeamCli
 
                         if (o.DefLogLvl != null)
                             settings.defaultLogLevel = o.DefLogLvl;
+
+                        if (o.TempAcct)
+                            settings.tempSettings["tempAcct"] = "true";
 
                         if (o.Interactive)
                             settings.tempSettings["interactive"] = "true";
