@@ -23,6 +23,11 @@ namespace BeamCli
 	            HelpText = "Create temporary crypto acct")]
             public bool TempAcct {get; set;}
 
+           [Option(
+	            Default = false,
+	            HelpText = "Join game only as validator")]
+            public bool ValidateOnly {get; set;}
+
             [Option(
 	            Default = null,
 	            HelpText = "Apian Network name" )]
@@ -100,6 +105,9 @@ namespace BeamCli
 
                         if (o.Interactive)
                             settings.tempSettings["interactive"] = "true";
+
+                        if (o.ValidateOnly)
+                            settings.tempSettings["validateOnly"] = "true";
 
                         if (o.NetName != null)
                             settings.apianNetworkName = o.NetName;

@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using P2pNet;
 using Apian;
 using BeamGameCode;
 using UniLog;
@@ -219,11 +220,42 @@ namespace BeamCli
 
         }
 
+        protected void DisplayGame(BeamGameInfo info, BeamGameStatus status)
+        {
+            string gameId = $"{info.GameName}: {info.GroupType}";
+            string memberInf = $"{status.MemberCount} ({info.MemberLimits.MinMembers}/{info.MemberLimits.MaxMembers})";
+            string playerInf = $"{status.PlayerCount} ({info.MemberLimits.MinPlayers}/{info.MemberLimits.MaxPlayers}";
+            string validatorInf = $"{status.ValidatorCount} ({info.MemberLimits.MinValidators}/{info.MemberLimits.MaxValidators})";
+            Console.WriteLine($" {gameId}, Members: {memberInf}, Players: {playerInf}, Validators: {validatorInf}");
+        }
+
+        protected void DisplayPeer(BeamNetworkPeer peer)
+        {
+            PeerNetworkStats stats = beamAppl.beamGameNet.GetPeerNetStats(peer.PeerAddr);
+            Console.WriteLine($"{SID(peer.PeerAddr)}: Lag: {stats?.NetLagMs}, Sigma: {stats?.NetLagSigma:F3}, LHF: {stats?.MsSinceLastHeadrFrom}, Name: {peer.Name}");
+        }
+
+
         public void UpdateNetworkInfo()
         {
             BeamNetInfo netInfo = beamAppl.NetInfo;
-            Console.WriteLine($"** Network Info: Name: {netInfo.NetName}, Peers: {netInfo.PeerCount}, Games: {netInfo.GameCount}");
+            Console.WriteLine($"\n** Network Info: Name: {netInfo.NetName}, Peers: {netInfo.PeerCount}, Games: {netInfo.GameCount}");
+            if (netInfo.PeerCount > 0)
+            {
+                Console.WriteLine($"Peers:");
+                foreach (var peer in netInfo.BeamPeers.Values)
+                    DisplayPeer(peer);
+            }
+            if (netInfo.GameCount > 0)
+            {
+                Console.WriteLine($"Games:");
+                foreach (var game in netInfo.BeamGames.Values)
+                    DisplayGame(game.GameInfo, game.GameStatus);
+            }
+            Console.WriteLine($"");
         }
+
+
 
         public void OnNetworkReady()
         {
@@ -282,15 +314,17 @@ namespace BeamCli
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, new GroupMemberLimits());
 
-                logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MaxPlayers}");
+                logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MemberLimits.MaxPlayers}");
             }
             else
                 throw new Exception($"gameName setting missing.");
 
+               bool joinAsValidator =  userSettings.GetTempSetting("validateOnly")  == "true";
+
             await Task.Delay(0); // Yuk, But usually this is an async UI operation
-            return new GameSelectedEventArgs(gameInfo, result);
+            return new GameSelectedEventArgs(gameInfo, result, joinAsValidator);
         }
 #endif
         public void SelectGame(IDictionary<string, BeamGameAnnounceData> existingGames)
@@ -323,14 +357,14 @@ namespace BeamCli
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType);
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, new GroupMemberLimits());
             }
             else
                 throw new Exception($"gameName setting missing.");
 
             // Info about BeamGameInfo creation lives in BeamGameNet
-
-            beamAppl.OnGameSelected( gameInfo, result );
+            bool joinAsValidator =  userSettings.GetTempSetting("validateOnly")  == "true";
+            beamAppl.OnGameSelected( new GameSelectedEventArgs(gameInfo, result, joinAsValidator));
         }
 
         //
@@ -478,6 +512,7 @@ namespace BeamCli
 
             commands= new Dictionary<ConsoleKey, CliCommand>()
             {
+                {ConsoleKey.N, new CliCommand("n) NetInfo", DoNetInfo)},
                 {ConsoleKey.P, new CliCommand("p) Pause", DoPause)},
                 {ConsoleKey.R, new CliCommand("r) Resume", DoResume)},
                 {ConsoleKey.Q, new CliCommand("q) Quit", DoQuit)},
@@ -547,6 +582,11 @@ namespace BeamCli
             BeamGameNet bgn = ba.beamGameNet as BeamGameNet;
 		    string groupId = ba.mainAppCore.ApianGroupId;
             bgn.SendResumeReq(groupId, "555");
+        }
+
+        public void DoNetInfo()
+        {
+            UpdateNetworkInfo();
         }
 
         public void DoQuit()
