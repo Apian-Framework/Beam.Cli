@@ -239,6 +239,9 @@ namespace BeamCli
         public void UpdateNetworkInfo()
         {
             BeamNetInfo netInfo = beamAppl.NetInfo;
+
+            netInfo.UpdateAllGamesStatus(beamAppl.beamGameNet);
+
             Console.WriteLine($"\n** Network Info: Name: {netInfo.NetName}, Peers: {netInfo.PeerCount}, Games: {netInfo.GameCount}");
             if (netInfo.PeerCount > 0)
             {
