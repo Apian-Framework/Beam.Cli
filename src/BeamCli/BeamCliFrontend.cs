@@ -232,7 +232,7 @@ namespace BeamCli
         protected void DisplayPeer(BeamNetworkPeer peer)
         {
             PeerNetworkStats stats = beamAppl.beamGameNet.GetPeerNetStats(peer.PeerAddr);
-            Console.WriteLine($"{SID(peer.PeerAddr)}: Lag: {stats?.NetLagMs}, Sigma: {stats?.NetLagSigma:F3}, LHF: {stats?.MsSinceLastHeadrFrom}, Name: {peer.Name}");
+            Console.WriteLine($"{SID(peer.PeerAddr)}: Lag: {stats?.NetLagMs}, Sigma: {stats?.NetLagSigma:F3}, LHF: {stats?.MsSinceLastHeardFrom}, Name: {peer.Name}");
         }
 
 
