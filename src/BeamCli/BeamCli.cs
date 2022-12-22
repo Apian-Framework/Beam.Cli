@@ -55,6 +55,11 @@ namespace BeamCli
             public string Settings {get; set;}
 
             [Option(
+	            Default = null,
+	            HelpText = "Net Connection Name (connections are in settings file)")]
+            public string Connection {get; set;}
+
+            [Option(
 	            Default = false,
 	            HelpText = "Interactive CLI Frontend")]
             public bool Interactive {get; set;}
@@ -88,6 +93,7 @@ namespace BeamCli
             Parser.Default.ParseArguments<CliOptions>(args)
                     .WithParsed<CliOptions>(o =>
                     {
+                        // Do this first
                         if (o.Settings != null)
                             settings = UserSettingsMgr.Load(o.Settings);
 
@@ -100,7 +106,16 @@ namespace BeamCli
                         if (o.DefLogLvl != null)
                             settings.defaultLogLevel = o.DefLogLvl;
 
-                        if (o.TempAcct)
+                        if (o.Connection != null)
+                        {
+                            if (settings.p2pConnectionSettings.ContainsKey(o.Connection))
+                                settings.defaultP2pConnection = o.Connection;
+                            else
+                                throw new ArgumentException($"Connection {o.Connection} does not exist in settings.");
+
+                        }
+
+                          if (o.TempAcct)
                             settings.tempSettings["tempAcct"] = "true";
 
                         if (o.Interactive)
