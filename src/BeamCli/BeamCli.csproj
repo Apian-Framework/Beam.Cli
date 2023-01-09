@@ -34,7 +34,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BeamGameCode\src\BeamGameCode\BeamGameCode.csproj" />
+    <ProjectReference Include="$(BeamGameCodeSource)\src\BeamGameCode\BeamGameCode.csproj" />
   </ItemGroup>
 
   <ItemGroup>
