@@ -115,7 +115,7 @@ namespace BeamCli
 
                         }
 
-                          if (o.TempAcct)
+                        if (o.TempAcct)
                             settings.tempSettings["tempAcct"] = "true";
 
                         if (o.Interactive)
