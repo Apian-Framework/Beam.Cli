@@ -24,61 +24,63 @@ jobs:
 
     steps:
 
-    - name: Setup .NET Core for netcoreapp3.1 target
-      uses: actions/setup-dotnet@v1
+    - uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 3.1.301
-
-    - name: Setup .NET Core for build tools
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.302
+        dotnet-version: '6.0.x'
 
     - name: Checkout Target
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
+        ref: main
         path: main
 
     - name: Checkout framework dependency - UniLog
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/UniLog
+        ref: main
         path: UniLog
 
     - name: Checkout framework dependency - ApianAppUtils
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/ApianAppUtils
+        ref: main
         path: ApianAppUtils
 
     - name: Checkout framework dependency - ApianCrypto
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/ApianCrypto
+        ref: main
         path: ApianCrypto
 
     - name: Checkout framework dependency - P2pNet
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/P2pNet
+        ref: main
         path: P2pNet
 
     - name: Checkout framework dependency - Apian.Net
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/Apian.Net
+        ref: main
         path: Apian.Net
 
     - name: Checkout framework dependency - NotUnityEngine
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/NotUnityEngine
+        ref: main
         path: NotUnityEngine
 
     - name: Checkout Apian dependencies (BeamGameCode)
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/BeamGameCode
+        ref: main
         path: BeamGameCode
 
     - name: Restore dependencies
@@ -86,15 +88,15 @@ jobs:
       working-directory: main
 
     - name: Build
-      run: dotnet build ./src/${{env.SUBPROJECT}} --configuration Release --no-restore
+      run: dotnet build ./src/${{env.SUBPROJECT}} --configuration Release
       working-directory: main
 
     - name: Test # See the test project .csproj file for property definitions
-      run: dotnet test ./tests/${{env.SUBPROJECT}}.Tests --no-restore --verbosity normal
+      run: dotnet test ./tests/${{env.SUBPROJECT}}.Tests --verbosity normal
       working-directory: main
 
     - name: Checkout CI badges
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: Apian-Framework/Apian-CI-Badges
         ref: ${{env.SUBPROJECT}}
