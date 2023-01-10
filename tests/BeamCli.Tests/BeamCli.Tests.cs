@@ -38,7 +38,7 @@ namespace BeamCliTests
         [Test]
         public void CliDriver_Init()
         {
-            BeamUserSettings settings = new BeamUserSettings();
+            BeamUserSettings settings = BeamUserSettings.CreateDefault();
             settings.startMode = "network"; // THis is really stupid and not really unit testing
 
             CliDriverWrapper drvw = new CliDriverWrapper();

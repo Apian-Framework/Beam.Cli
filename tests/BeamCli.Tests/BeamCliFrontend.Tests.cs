@@ -21,18 +21,17 @@ namespace BeamCliTests
         [Test]
         public void CliFrontend_ConstructorWorks()
         {
-            Mock<BeamUserSettings> settings = new Mock<BeamUserSettings>();
-
-            BeamCliFrontend fe = new BeamCliFrontend(settings.Object);
+            BeamUserSettings settings = BeamUserSettings.CreateDefault();
+            BeamCliFrontend fe = new BeamCliFrontend(settings);
             Assert.That(fe, Is.InstanceOf<BeamCliFrontend>());
         }
 
         [Test]
         public void CliFrontend_SetAppCore()
         {
-            Mock<BeamUserSettings> mockSettings = new Mock<BeamUserSettings>();
+            BeamUserSettings settings = BeamUserSettings.CreateDefault();
             BeamAppCore realCore = new BeamAppCore();
-            BeamCliFrontend fe = new BeamCliFrontend(mockSettings.Object);
+            BeamCliFrontend fe = new BeamCliFrontend(settings);
 
             fe.SetAppCore(null);
             Assert.That(fe.appCore, Is.Null);
