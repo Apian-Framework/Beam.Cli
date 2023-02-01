@@ -39,29 +39,31 @@ namespace BeamCli
             logger = UniLogger.GetLogger("Frontend");
             SetupModeActions();
 
-            cryptoThing = EthForApian.Create();
+            // FIXME: Old test for crypto signing. Just kept for reference. Needs to be deleted
+            //
+            // cryptoThing = EthForApian.Create();
 
-            if (string.IsNullOrEmpty(userSettings.cryptoAcctJSON))
-            {
-                string addr =  cryptoThing.CreateAccount();
-                string json = cryptoThing.GetJsonForAccount("password");
-                DisplayMessage(MessageSeverity.Info, $"Created new Eth acct: {addr}");
-                userSettings.cryptoAcctJSON = json;
-                UserSettingsMgr.Save(userSettings);
-            } else {
-                string addr = cryptoThing.CreateAccountFromJson("password", userSettings.cryptoAcctJSON);
-                DisplayMessage(MessageSeverity.Info, $"Loaded Eth acct: {addr} from settings");
-            }
+            // if (string.IsNullOrEmpty(userSettings.cryptoAcctJSON))
+            // {
+            //     string addr =  cryptoThing.CreateAccount();
+            //     string json = cryptoThing.GetJsonForAccount("password");
+            //     DisplayMessage(MessageSeverity.Info, $"Created new Eth acct: {addr}");
+            //     userSettings.cryptoAcctJSON = json;
+            //     UserSettingsMgr.Save(userSettings);
+            // } else {
+            //     string addr = cryptoThing.CreateAccountFromJson("password", userSettings.cryptoAcctJSON);
+            //     DisplayMessage(MessageSeverity.Info, $"Loaded Eth acct: {addr} from settings");
+            // }
 
-            // Stupid temporary test
-            string msg = "Ya Ya! Ya Ya ya.";
-            string sig = cryptoThing.EncodeUTF8AndSign(msg);
+            // // Stupid temporary test
+            // string msg = "Ya Ya! Ya Ya ya.";
+            // string sig = cryptoThing.EncodeUTF8AndSign(msg);
 
-            DisplayMessage(MessageSeverity.Info, $"Message: {msg}");
-            DisplayMessage(MessageSeverity.Info, $"Signature: {sig}");
+            // DisplayMessage(MessageSeverity.Info, $"Message: {msg}");
+            // DisplayMessage(MessageSeverity.Info, $"Signature: {sig}");
 
-            string recAddr = cryptoThing.EncodeUTF8AndEcRecover(msg, sig);
-            DisplayMessage(MessageSeverity.Info, $"Recovered addr: {recAddr}");
+            // string recAddr = cryptoThing.EncodeUTF8AndEcRecover(msg, sig);
+            // DisplayMessage(MessageSeverity.Info, $"Recovered addr: {recAddr}");
 
         }
 

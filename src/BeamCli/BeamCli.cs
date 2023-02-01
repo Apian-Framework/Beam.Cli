@@ -109,7 +109,7 @@ namespace BeamCli
                         if (o.Connection != null)
                         {
                             if (settings.p2pConnectionSettings.ContainsKey(o.Connection))
-                                settings.defaultP2pConnection = o.Connection;
+                                settings.curP2pConnection = o.Connection;
                             else
                                 throw new ArgumentException($"Connection {o.Connection} does not exist in settings.");
 
