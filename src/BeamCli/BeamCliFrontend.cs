@@ -8,8 +8,6 @@ using BeamGameCode;
 using UniLog;
 using static UniLog.UniLogger; // for SID()
 
-using ApianCrypto;
-
 #if !SINGLE_THREADED
 using System.Threading.Tasks;
 #endif
@@ -25,8 +23,6 @@ namespace BeamCli
         protected BeamUserSettings userSettings;
         public UniLogger logger;
         private long prevGameTime;
-
-        public IApianCrypto cryptoThing;
 
         Dictionary<int, Action<BeamGameMode, object>> modeStartActions;
         Dictionary<int, Action<BeamGameMode, object>> modeEndActions;
@@ -181,6 +177,7 @@ namespace BeamCli
             beamAppl.GameAnnounceEvt += OnGameAnnounceEvt;
             beamAppl.PeerJoinedEvt += OnPeerJoinedNetEvt;
             beamAppl.PeerLeftEvt += OnPeerLeftNetEvt;
+            beamAppl.ChainIdEvt += OnChainIdEvt;
         }
         protected void OnEndNetworkMode(BeamGameMode mode, object param)
         {
@@ -188,6 +185,7 @@ namespace BeamCli
             beamAppl.GameAnnounceEvt -= OnGameAnnounceEvt;
             beamAppl.PeerJoinedEvt -= OnPeerJoinedNetEvt;
             beamAppl.PeerLeftEvt -= OnPeerLeftNetEvt;
+            beamAppl.ChainIdEvt += OnChainIdEvt;
         }
 
        protected void OnStartNetPlay(BeamGameMode mode, object param) {}
@@ -401,6 +399,11 @@ namespace BeamCli
         public void OnGameAnnounceEvt(object sender, GameAnnounceEventArgs args)
         {
             UpdateNetworkInfo();
+        }
+
+        public void OnChainIdEvt(object sender, ChainIdEventArgs args)
+        {
+            Console.WriteLine( $"Connected to Blockchain: \"{userSettings.curBlockchain}\" (id: {args.chainId})");
         }
 
         // Players
