@@ -185,7 +185,7 @@ namespace BeamCli
             beamAppl.GameAnnounceEvt -= OnGameAnnounceEvt;
             beamAppl.PeerJoinedEvt -= OnPeerJoinedNetEvt;
             beamAppl.PeerLeftEvt -= OnPeerLeftNetEvt;
-            beamAppl.ChainIdEvt += OnChainIdEvt;
+            beamAppl.ChainIdEvt -= OnChainIdEvt;
         }
 
        protected void OnStartNetPlay(BeamGameMode mode, object param) {}
