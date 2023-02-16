@@ -30,7 +30,7 @@ namespace BeamCliTests
         public void CliFrontend_SetAppCore()
         {
             BeamUserSettings settings = BeamUserSettings.CreateDefault();
-            BeamAppCore realCore = new BeamAppCore();
+            BeamAppCore realCore = new BeamAppCore("apianSessionId");
             BeamCliFrontend fe = new BeamCliFrontend(settings);
 
             fe.SetAppCore(null);
