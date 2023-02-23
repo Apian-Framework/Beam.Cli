@@ -19,6 +19,11 @@ namespace BeamCli
             public string GameName {get; set;}
 
             [Option(
+	            Default = null,
+	            HelpText = "Screen Name")]
+            public string ScreenName {get; set;}
+
+            [Option(
 	            Default = false,
 	            HelpText = "Create temporary crypto acct")]
             public bool TempAcct {get; set;}
@@ -37,7 +42,6 @@ namespace BeamCli
 	            Default = null,
 	            HelpText = "Apian Group consensus mechanism (if creating)" )]
             public string GroupType {get; set;}
-
 
             [Option(
 	            Default = null,
@@ -126,6 +130,9 @@ namespace BeamCli
 
                         if (o.NetName != null)
                             settings.apianNetworkName = o.NetName;
+
+                        if (o.ScreenName != null)
+                            settings.screenName = o.ScreenName;
 
                         if (o.GameName != null)
                             settings.tempSettings["gameName"] = o.GameName;
