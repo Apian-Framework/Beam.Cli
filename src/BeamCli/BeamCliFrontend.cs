@@ -273,6 +273,8 @@ namespace BeamCli
             BeamCoreState newCoreState = csArgs.coreState as BeamCoreState;
             newCoreState.PlaceFreedEvt += OnPlaceFreedEvt;
             newCoreState.PlacesClearedEvt += OnPlacesClearedEvt;
+            newCoreState.SquareAddEvt += OnSquareAddEvt;
+            newCoreState.SquareDelEvt += OnSquareDelEvt;
         }
 
 
@@ -486,6 +488,16 @@ namespace BeamCli
         public void OnPlacesClearedEvt(object sender, EventArgs e)
         {
            logger.Debug($"OnClearPlaces()");
+        }
+
+        public void OnSquareAddEvt(object sender, BeamSquareEventArgs args)
+        {
+            logger.Debug($"OnSquareAdded(): pos: {args.posHash} Team: {args.team.Name}");
+        }
+
+        public void OnSquareDelEvt(object sender, BeamSquareEventArgs args)
+        {
+            logger.Debug($"OnSquareRemoved(): pos: {args.posHash}");
         }
 
         public void OnReadyToPlay(object sender, EventArgs e)
