@@ -43,6 +43,16 @@ namespace BeamCli
 	            HelpText = "Apian Group consensus mechanism (if creating)" )]
             public string GroupType {get; set;}
 
+           [Option(
+	            Default = null,
+	            HelpText = "On-chain ApianANchor contract address" )]
+            public string AnchorAddr {get; set;}
+
+           [Option(
+	            Default = null,
+	            HelpText = "Apian Group Anchor Posting Algorithm" )]
+            public string AnchorAlgo {get; set;}
+
             [Option(
 	            Default = null,
 	            HelpText = "Start with this GameMode" )]
@@ -139,6 +149,12 @@ namespace BeamCli
 
                         if (o.GroupType != null)
                             settings.tempSettings["groupType"] = o.GroupType;
+
+                        if (o.AnchorAddr != null)
+                            settings.anchorContractAddr = o.AnchorAddr; // TODO: validate? Nah...
+
+                        if (o.AnchorAlgo != null)
+                            settings.tempSettings["anchorAlgo"] = o.AnchorAlgo;
 
                        if (o.StartMode != null)
                             settings.startMode = o.StartMode;
