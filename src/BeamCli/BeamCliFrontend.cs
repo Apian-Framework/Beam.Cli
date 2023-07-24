@@ -321,11 +321,13 @@ namespace BeamCli
 
 
                 // Note that this is only used if the group is being created.
+                string anchorAddr = null; // default to no anchor
                 string anchorAlgo = ApianGroupInfo.AnchorPostsNone; // default to no posting
                 if ( result == GameSelectedEventArgs.ReturnCode.kCreate )
                 {
                     if (userSettings.tempSettings.TryGetValue("anchorAlgo", out anchorAlgo))
                     {
+                        anchorAddr = userSettings.anchorContractAddr;
                         logger.Warn($"Requested anchor posting algorithm: {anchorAlgo}");
                     }
                 }
@@ -333,7 +335,7 @@ namespace BeamCli
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAlgo, new GroupMemberLimits());
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
 
                 logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MemberLimits.MaxPlayers}");
             }
@@ -375,10 +377,12 @@ namespace BeamCli
 
                 // Note that this only matters if the group is being created.
                 string anchorAlgo = ApianGroupInfo.AnchorPostsNone; // default to no posting
+                string anchorAddr = null; // default to no anchor
                 if ( result == GameSelectedEventArgs.ReturnCode.kCreate )
                 {
                     if (userSettings.tempSettings.TryGetValue("anchorAlgo", out anchorAlgo))
                     {
+                        anchorAddr = userSettings.anchorContractAddr;
                         logger.Warn($"Requested anchor posting algorithm: {anchorAlgo}");
                     }
                 }
@@ -386,7 +390,7 @@ namespace BeamCli
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAlgo, new GroupMemberLimits());
+                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
             }
             else
                 throw new Exception($"gameName setting missing.");
