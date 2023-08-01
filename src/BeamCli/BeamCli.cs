@@ -28,6 +28,11 @@ namespace BeamCli
 	            HelpText = "Create temporary crypto acct")]
             public bool TempAcct {get; set;}
 
+            [Option(
+	            Default = null,
+	            HelpText = "InGame acct address (must be present)")]
+            public string GameAcct {get; set;}
+
            [Option(
 	            Default = false,
 	            HelpText = "Join game only as validator")]
@@ -131,6 +136,15 @@ namespace BeamCli
 
                         if (o.TempAcct)
                             settings.tempSettings["tempAcct"] = "true";
+
+                        if (o.GameAcct != null)
+                        {
+                            if (settings.gameAcctJSON.ContainsKey(o.GameAcct))
+                                settings.gameAcctAddr = o.GameAcct;
+                            else
+                                throw new ArgumentException($"GameAcct {o.GameAcct} does not exist in settings.");
+
+                        }
 
                         if (o.Interactive)
                             settings.tempSettings["interactive"] = "true";
