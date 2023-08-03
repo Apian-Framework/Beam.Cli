@@ -1,4 +1,3 @@
-//#define SINGLE_THREADED
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -8,9 +7,7 @@ using BeamGameCode;
 using UniLog;
 using static UniLog.UniLogger; // for SID()
 
-#if !SINGLE_THREADED
 using System.Threading.Tasks;
-#endif
 
 namespace BeamCli
 {
@@ -287,7 +284,6 @@ namespace BeamCli
         // and ends with the frontend setting the result for a passed-in TaskCompletionResult
 
         // In THIS case, we just return (but have to await something to be async)
-#if !SINGLE_THREADED
         public async Task<GameSelectedEventArgs> SelectGameAsync(IDictionary<string, BeamGameAnnounceData> existingGames)
         {
             // gameName cli param can end in:
@@ -347,7 +343,7 @@ namespace BeamCli
             await Task.Delay(0); // Yuk, But usually this is an async UI operation
             return new GameSelectedEventArgs(gameInfo, result, joinAsValidator);
         }
-#endif
+
         public void SelectGame(IDictionary<string, BeamGameAnnounceData> existingGames)
         {
             // gameName cli param can end in:
