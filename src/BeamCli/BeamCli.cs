@@ -237,7 +237,9 @@ namespace BeamCli
 
         protected void _Init(BeamUserSettings settings)
         {
-            if ( settings.tempSettings.ContainsKey("interactive")  && settings.tempSettings["interactive"] == "true" )
+            //  if ( settings.tempSettings.ContainsKey("interactive")  && settings.tempSettings["interactive"] == "true" )
+
+            if ( settings.tempSettings.TryGetValue("interactive", out string isInteractiveSt) && isInteractiveSt == "true")
             {
                 string s = "Creating Interactive Frontend";
                 Console.Write($"{s}");

@@ -330,8 +330,9 @@ namespace BeamCli
 
                 // TODO: does the frontend have any busniess selecting an agreement type?
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
-                gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
+                gameInfo = existingGames.TryGetValue(gameName, out BeamGameAnnounceData gameAnnounceData)
+                    ? gameAnnounceData.GameInfo
+                    :  beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
 
                 logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MemberLimits.MaxPlayers}");
             }
@@ -383,10 +384,9 @@ namespace BeamCli
                     }
                 }
 
-                // TODO: does the frontend have any busniess selecting an agreement type?
-                // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
-                gameInfo = existingGames.ContainsKey(gameName) ? existingGames[gameName].GameInfo
-                    : beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
+                gameInfo = existingGames.TryGetValue(gameName, out BeamGameAnnounceData gameAnnounceData)
+                    ? gameAnnounceData.GameInfo
+                    :  beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
             }
             else
                 throw new Exception($"gameName setting missing.");
@@ -574,8 +574,12 @@ namespace BeamCli
                 ConsoleKeyInfo k = Console.ReadKey();
                 if ( k.Modifiers == 0 )
                 {
-                    if (commands.ContainsKey(k.Key))
-                        commands[k.Key].act();
+                    if ( commands.TryGetValue(k.Key, out CliCommand cmd) ) {
+                       cmd.act();
+                    }
+
+ //                   if (commands.ContainsKey(k.Key))
+ //                       commands[k.Key].act();
                 }
 
             }
