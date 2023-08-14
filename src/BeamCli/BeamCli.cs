@@ -13,10 +13,16 @@ namespace BeamCli
     {
         public class CliOptions
         {
+
             [Option(
 	            Default = null,
 	            HelpText = "Join this game. Else create a game")]
             public string GameName {get; set;}
+
+            [Option(
+	            Default = null,
+	            HelpText = "Blockchain to use and the Anchor")]
+            public string AnchorChain {get; set;}
 
             [Option(
 	            Default = null,
@@ -137,13 +143,25 @@ namespace BeamCli
                         if (o.TempAcct)
                             settings.tempSettings["tempAcct"] = "true";
 
+                        if (o.AnchorChain != null)
+                        {
+                            if (o.AnchorChain == "none" || o.AnchorChain == "None")
+                                settings.curBlockchain = null;
+                            else
+                            {
+                                if (settings.blockchainInfos.ContainsKey(o.AnchorChain))
+                                    settings.curBlockchain = o.AnchorChain;
+                                else
+                                    throw new ArgumentException($"Blockchain {o.AnchorChain} does not exist in settings.");
+                            }
+                        }
+
                         if (o.GameAcct != null)
                         {
                             if (settings.gameAcctJSON.ContainsKey(o.GameAcct))
                                 settings.gameAcctAddr = o.GameAcct;
                             else
                                 throw new ArgumentException($"GameAcct {o.GameAcct} does not exist in settings.");
-
                         }
 
                         if (o.Interactive)
