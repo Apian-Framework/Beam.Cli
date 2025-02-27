@@ -1,18 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IsPackable>false</IsPackable>
     <DebugType>portable</DebugType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
+
+    <BuildTimeStamp>$([System.DateTime]::UtcNow.ToString(yyMMddHHmmssFF))</BuildTimeStamp>
+
   </PropertyGroup>
 
   <Target Name="ShowEnv" BeforeTargets="BeforeBuild">
       <Message Text=" " Importance="high" />
       <Message Text="-------------------------------------------------------------------------------------" Importance="high" />
+      <Message Text="BuildTimeStamp = $(BuildTimeStamp)" Importance="high" />
       <Message Text="Build Environment:" Importance="high" />
       <Message Text="MSBuildProjectDirectory = $(MSBuildProjectDirectory)" Importance="high" />
       <Message Text="MSBuildThisFileDirectory = $(MSBuildThisFileDirectory)" Importance="high" />
@@ -28,6 +32,8 @@
       <Message Text="OutDir = $(OutDir)" Importance="high" />
       <Message Text="IntDir = $(IntDir)" Importance="high" />
       <Message Text="TargetDir = $(TargetDir)" Importance="high" />
+      <Message Text="-------------------------------------------------------------------------------------" Importance="high" />
+      <Message Text="BeamGameCodeSource = $(BeamGameCodeSource)" Importance="high" />
       <Message Text="-------------------------------------------------------------------------------------" Importance="high" />
       <Message Text=" " Importance="high" />
   </Target>

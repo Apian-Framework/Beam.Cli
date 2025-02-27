@@ -1,0 +1,37 @@
+{
+	"folders": [
+		{
+			"name": "Beam.Cli",
+			"path": "."
+		},
+		{
+			"name": "BeamGameCode",
+			"path": "../BeamGameCode"
+		},
+		{
+			"name": "Apian.Net",
+			"path": "../Apian.Net"
+		},
+		{
+			"name": "P2pNet",
+			"path": "../P2pNet"
+		},
+		{
+			"name": "UniLog",
+			"path": "../UniLog"
+		},
+		{
+			"path": "../ApianAppUtils"
+		},
+		{
+			"path": "../ApianCrypto"
+		},
+		{
+			"path": "../NotUnityEngine"
+		}
+	],
+	"settings": {
+		"dotnet.defaultSolution": "./BeamCli.sln",
+		"CodeGPT.apiKey": "Custom"
+	}
+}
