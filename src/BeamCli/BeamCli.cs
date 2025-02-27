@@ -21,6 +21,11 @@ namespace BeamCli
 
             [Option(
 	            Default = null,
+	            HelpText = "Block counts for grid. X,Z")]
+            public string GridSize {get; set;}
+
+            [Option(
+	            Default = null,
 	            HelpText = "Blockchain to use and the Anchor")]
             public string AnchorChain {get; set;}
 
@@ -125,6 +130,28 @@ namespace BeamCli
                         if (o.ForceDefaultSettings)
                             settings = BeamUserSettings.CreateDefault();
 
+                        if (o.GameName != null)
+                            settings.tempSettings["gameName"] = o.GameName;
+
+                        if (o.GridSize != null)
+                        {
+                            try {
+                                Console.WriteLine($"GridSize string: {o.GridSize}");
+                                string[] sizes = o.GridSize.Split(',');
+                                Console.WriteLine($"Sizes[0] string: {sizes[0]}");
+                                settings.blockCntX = int.Parse(sizes[0]);
+                                settings.blockCntZ = int.Parse(sizes[1]);
+                                Console.WriteLine($"settings.blockCntX = {settings.blockCntX}");
+                            } catch (Exception ex) {
+                                throw new ArgumentException($"GridSize '{o.GridSize}' is not a valid X,Z param. {ex.Message}");
+                            }
+                            if (((settings.blockCntX & 1) == 1) || ((settings.blockCntZ & 1) == 1))
+                                throw new ArgumentException($"GridSizes must be even");
+
+                            if ((settings.blockCntX < 4 ) || (settings.blockCntZ < 4))
+                                    throw new ArgumentException($"GridSizes must be at LEAST 4 blocks");
+                        }
+
                         if (o.ThrowOnError)
                             UniLogger.DefaultThrowOnError = true;
 
@@ -175,9 +202,6 @@ namespace BeamCli
 
                         if (o.ScreenName != null)
                             settings.screenName = o.ScreenName;
-
-                        if (o.GameName != null)
-                            settings.tempSettings["gameName"] = o.GameName;
 
                         if (o.GroupType != null)
                             settings.tempSettings["groupType"] = o.GroupType;

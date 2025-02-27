@@ -332,7 +332,7 @@ namespace BeamCli
                 // Hmm. Actually, it kinda does: a user might well want to choose from a set of them.
                 gameInfo = existingGames.TryGetValue(gameName, out BeamGameAnnounceData gameAnnounceData)
                     ? gameAnnounceData.GameInfo
-                    :  beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
+                    :  beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits(), userSettings.blockCntX, userSettings.blockCntZ);
 
                 logger.Info($"Selected Game: {gameInfo.GameName} MaxPlayers: {gameInfo.MemberLimits.MaxPlayers}");
             }
@@ -386,7 +386,7 @@ namespace BeamCli
 
                 gameInfo = existingGames.TryGetValue(gameName, out BeamGameAnnounceData gameAnnounceData)
                     ? gameAnnounceData.GameInfo
-                    :  beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits());
+                    :  beamAppl.beamGameNet.CreateBeamGameInfo(gameName, groupType, anchorAddr, anchorAlgo, new GroupMemberLimits(), userSettings.blockCntX, userSettings.blockCntZ);
             }
             else
                 throw new Exception($"gameName setting missing.");
@@ -492,13 +492,13 @@ namespace BeamCli
             //                                // (would rather make it not happen - not sure if that's possible)
             // string placeOwner = createdBy.peerAddr;
 
-            logger.Info($"OnPlaceHitEvt. Place: {args.p?.GetPos().ToString()}  Bike: {SID(args.ib?.bikeId)}");
+            logger.Info($"OnPlaceHitEvt. Place: {args.p?.GetPos(appCore.GetGround()).ToString()}  Bike: {SID(args.ib?.bikeId)}");
         }
 
         public void OnPlaceClaimedEvt(object sender, BeamPlaceEventArgs args)
         {
             BeamPlace p = args?.p;
-            logger.Verbose($"OnPlaceClaimedEvt. Pos: {p?.GetPos().ToString()} Bike: {SID(p.bike.bikeId)}");
+            logger.Verbose($"OnPlaceClaimedEvt. Pos: {p?.GetPos(appCore.GetGround()).ToString()} Bike: {SID(p.bike.bikeId)}");
         }
 
         // Ground
