@@ -283,6 +283,8 @@ namespace BeamCli
         // In the general GUI app case this is an async frontend gui thing
         // and ends with the frontend setting the result for a passed-in TaskCompletionResult
 
+        static readonly char[] nameModifierEndings = {'+','*'} ;
+
         // In THIS case, we just return (but have to await something to be async)
         public async Task<GameSelectedEventArgs> SelectGameAsync(IDictionary<string, BeamGameAnnounceData> existingGames)
         {
@@ -311,8 +313,8 @@ namespace BeamCli
                     groupType = CreatorSezGroupManager.kGroupType;
                 }
 
-                gameName = argStr.TrimEnd( new [] {'+','*'} );
-                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.ContainsKey(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
+                gameName = argStr.TrimEnd( nameModifierEndings );
+                result =  (argStr.EndsWith('*')) || (argStr.EndsWith('+') && ! existingGames.ContainsKey(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
                     : GameSelectedEventArgs.ReturnCode.kJoin;
 
 
@@ -368,8 +370,8 @@ namespace BeamCli
             string argStr;
             if (userSettings.tempSettings.TryGetValue("gameName", out argStr))
             {
-                gameName = argStr.TrimEnd( new [] {'+','*'} );
-                result =  (argStr.EndsWith("*")) || (argStr.EndsWith("+") && ! existingGames.ContainsKey(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
+                gameName = argStr.TrimEnd( nameModifierEndings );
+                result =  (argStr.EndsWith('*')) || (argStr.EndsWith('+') && ! existingGames.ContainsKey(gameName)) ? GameSelectedEventArgs.ReturnCode.kCreate
                     : GameSelectedEventArgs.ReturnCode.kJoin;
 
                 // Note that this only matters if the group is being created.
